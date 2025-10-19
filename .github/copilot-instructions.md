@@ -2,7 +2,7 @@
 
 ## Git Commit Messages
 - Prefer short, concise commit messages (one or two lines maximum)
-- Combine git add, commit, and push into a single command (e.g., `git add . && git commit -m "message" && git push`)
+- Combine git add and commit into a single command (e.g., `git add . && git commit -m "message"`)
 
 ## Python Environment
 - Always use the `.venv` virtual environment for Python commands and dependencies
