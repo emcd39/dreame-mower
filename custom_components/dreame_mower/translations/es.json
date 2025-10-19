@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Elija el tipo de cuenta",
+        "description": "Seleccione su cuenta de tipo para la integración de la cortadora de sueño.",
+        "data": {
+          "account_type": "Tipo de cuenta"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Nombre de usuario",
+          "password": "Contraseña",
+          "country": "País del servidor"
+        },
+        "description": "Inicie sesión en la nube Dreamehome."
+      },
+      "mova": {
+        "data": {
+          "username": "Nombre de usuario",
+          "password": "Contraseña",
+          "country": "País del servidor"
+        },
+        "description": "Inicie sesión en la nube de Movahome."
+      },
+      "devices": {
+        "data": {
+          "devices": "Dispositivos compatibles"
+        },
+        "description": "Seleccione el dispositivo Dreame Mower que desea configurar."
+      },
+      "options": {
+        "data": {
+          "name": "Nombre del dispositivo",
+          "notify": "Tipos de notificación"
+        },
+        "description": "Configure el nombre del dispositivo de la cortadora de sueño y las preferencias de notificación."
+      }
+    },
+    "error": {
+      "cannot_connect": "No se conectó.",
+      "unsupported": "El dispositivo no es compatible",
+      "credentials_incomplete": "Credenciales incompletos, complete el nombre de usuario, la contraseña y el país",
+      "login_error": "No pudo iniciar sesión, verificar las credenciales.",
+      "no_devices": "No se encuentran dispositivos compatibles en esta cuenta en el país seleccionado."
+    },
+    "abort": {
+      "cannot_connect": "No se conectó."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opción",
+        "description": "Configurar la configuración de notificación para la integración de los cortacésped Dreame.",
+        "data": {
+          "notify": "Tipos de notificación"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Estado",
+        "state": {
+          "no_status": "Sin estado",
+          "mowing": "Siega",
+          "standby": "Apoyar",
+          "paused": "Detenido",
+          "paused_due_to_errors": "Pausado debido a errores",
+          "returning_to_station_to_charge": "Regresando a la estación para cargar",
+          "charging": "Carga",
+          "mapping": "Cartografía",
+          "charging_complete": "Carga completa",
+          "updating": "Actualización"
+        }
+      },
+      "charging_status": {
+        "name": "Estado de carga",
+        "state": {
+          "not_docked": "No atracado",
+          "charging": "Carga",
+          "not_charging": "No cargando",
+          "charging_completed": "Carga completada",
+          "return_to_charge": "Volver al cargo"
+        }
+      },
+      "mowing_progress": {
+        "name": "Progreso de corte"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "No molestar"
+      },
+      "charging_schedule": {
+        "name": "Horario de carga"
+      },
+      "timezone": {
+        "name": "Zona horaria"
+      },
+      "temperature": {
+        "name": "Temperatura del dispositivo"
+      },
+      "bms_phase": {
+        "name": "Fase BMS"
+      },
+      "device_code": {
+        "name": "Código de dispositivo"
+      },
+      "current_task": {
+        "name": "Tarea actual"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Mapa"
+      }
+    }
+  }
+}

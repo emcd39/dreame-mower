@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Välj kontotyp",
+        "description": "Välj din kontotyp för Dreame Mower -integrationen.",
+        "data": {
+          "account_type": "Kontotyp"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Användarnamn",
+          "password": "Lösenord",
+          "country": "Servern"
+        },
+        "description": "Logga in på Dreamehome -molnet."
+      },
+      "mova": {
+        "data": {
+          "username": "Användarnamn",
+          "password": "Lösenord",
+          "country": "Servern"
+        },
+        "description": "Logga in på Movahome -molnet."
+      },
+      "devices": {
+        "data": {
+          "devices": "Stödda enheter"
+        },
+        "description": "Välj den Dreame Mower -enheten du vill ställa in."
+      },
+      "options": {
+        "data": {
+          "name": "Enhetsnamn",
+          "notify": "Anmälningstyper"
+        },
+        "description": "Konfigurera ditt Dreame Mower -enhetsnamn och meddelandepreferenser."
+      }
+    },
+    "error": {
+      "cannot_connect": "Misslyckades med att ansluta.",
+      "unsupported": "Enheten stöds inte",
+      "credentials_incomplete": "Bevisar ofullständiga, fyll i användarnamn, lösenord och land",
+      "login_error": "Kunde inte logga in, kontrollera referenser.",
+      "no_devices": "Inga enheter som stöds i detta konto på utvalt land."
+    },
+    "abort": {
+      "cannot_connect": "Misslyckades med att ansluta."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Alternativ",
+        "description": "Konfigurera inställningar för meddelanden för Dreame Mower -integrationen.",
+        "data": {
+          "notify": "Anmälningstyper"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "no_status": "Ingen status",
+          "mowing": "Klippa",
+          "standby": "Beredskap",
+          "paused": "Paus",
+          "paused_due_to_errors": "Pausade på grund av fel",
+          "returning_to_station_to_charge": "Återvänder till stationen för att ladda",
+          "charging": "Laddning",
+          "mapping": "Kartläggning",
+          "charging_complete": "Laddning komplett",
+          "updating": "Uppdatering"
+        }
+      },
+      "charging_status": {
+        "name": "Laddningsstatus",
+        "state": {
+          "not_docked": "Inte dockad",
+          "charging": "Laddning",
+          "not_charging": "Laddar inte",
+          "charging_completed": "Laddning avslutad",
+          "return_to_charge": "Återgå till laddning"
+        }
+      },
+      "mowing_progress": {
+        "name": "Klippa framsteg"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "Stör ej"
+      },
+      "charging_schedule": {
+        "name": "Laddningsschema"
+      },
+      "timezone": {
+        "name": "Tidszon"
+      },
+      "temperature": {
+        "name": "Enhetstemperatur"
+      },
+      "bms_phase": {
+        "name": "BMS -fas"
+      },
+      "device_code": {
+        "name": "Enhetskod"
+      },
+      "current_task": {
+        "name": "Aktuell uppgift"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Karta"
+      }
+    }
+  }
+}

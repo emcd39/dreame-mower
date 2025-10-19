@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Wählen Sie den Kontotyp",
+        "description": "Wählen Sie Ihren Kontotyp für die Integration von Dreame Mower aus.",
+        "data": {
+          "account_type": "Kontotyp"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Benutzername",
+          "password": "Passwort",
+          "country": "Cloudserver"
+        },
+        "description": "Melden Sie sich in der Dreamehome Cloud an."
+      },
+      "mova": {
+        "data": {
+          "username": "Benutzername",
+          "password": "Passwort",
+          "country": "Serverland"
+        },
+        "description": "Melden Sie sich in der Movahome Cloud an."
+      },
+      "devices": {
+        "data": {
+          "devices": "Unterstützte Geräte"
+        },
+        "description": "Bitte wählen Sie das Dreame Mower -Gerät aus, das Sie einrichten möchten."
+      },
+      "options": {
+        "data": {
+          "name": "Gerätename",
+          "notify": "Benachrichtigungstypen"
+        },
+        "description": "Konfigurieren Sie Ihren Geräten Namen und die Benachrichtigungseinstellungen für den Dreame Mower."
+      }
+    },
+    "error": {
+      "cannot_connect": "Fehlgeschlagene Verbindung.",
+      "unsupported": "Das Gerät wird nicht unterstützt",
+      "credentials_incomplete": "Unvollständige Anmeldeinformationen, bitte füllen Sie Benutzername, Passwort und Land aus",
+      "login_error": "Es konnte sich nicht anmelden, überprüfen Sie die Anmeldeinformationen.",
+      "no_devices": "Keine unterstützten Geräte in diesem Konto in ausgewähltem Land."
+    },
+    "abort": {
+      "cannot_connect": "Fehlgeschlagene Verbindung."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Optionen",
+        "description": "Konfigurieren Sie die Benachrichtigungseinstellungen für die Integration von Dreame Mäher.",
+        "data": {
+          "notify": "Benachrichtigungstypen"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "no_status": "Kein Status",
+          "mowing": "Mähen",
+          "standby": "Standby",
+          "paused": "Pause",
+          "paused_due_to_errors": "Aufgrund von Fehlern angehalten",
+          "returning_to_station_to_charge": "Rückkehr zur Station, um zu laden",
+          "charging": "Wird geladen",
+          "mapping": "Karttierung",
+          "charging_complete": "Vollständig geladen",
+          "updating": "Wird aktualisiert"
+        }
+      },
+      "charging_status": {
+        "name": "Ladestatus",
+        "state": {
+          "not_docked": "Nicht angedockt",
+          "charging": "Wird geladen",
+          "not_charging": "Wird nicht aufgeladen",
+          "charging_completed": "Vollständig geladen",
+          "return_to_charge": "Rückkehr zum Laden"
+        }
+      },
+      "mowing_progress": {
+        "name": "Mäh Fortschritt"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "Bitte nicht stören"
+      },
+      "charging_schedule": {
+        "name": "Ladeplan"
+      },
+      "timezone": {
+        "name": "Zeitzone"
+      },
+      "temperature": {
+        "name": "Gerätetemperatur"
+      },
+      "bms_phase": {
+        "name": "BMS -Phase"
+      },
+      "device_code": {
+        "name": "Gerätecode"
+      },
+      "current_task": {
+        "name": "Aktuelle Aufgabe"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Karte"
+      }
+    }
+  }
+}

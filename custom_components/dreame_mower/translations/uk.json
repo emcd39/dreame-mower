@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Виберіть тип облікового запису",
+        "description": "Виберіть тип свого облікового запису для інтеграції косарки Dreame.",
+        "data": {
+          "account_type": "Тип рахунку"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Ім'я користувача",
+          "password": "Пароль",
+          "country": "Країна сервера"
+        },
+        "description": "Увійдіть у хмару Dreamehome."
+      },
+      "mova": {
+        "data": {
+          "username": "Ім'я користувача",
+          "password": "Пароль",
+          "country": "Країна сервера"
+        },
+        "description": "Увійдіть у хмару Movahome."
+      },
+      "devices": {
+        "data": {
+          "devices": "Підтримувані пристрої"
+        },
+        "description": "Будь ласка, виберіть пристрій Dreame Cower, який ви хочете налаштувати."
+      },
+      "options": {
+        "data": {
+          "name": "Назва пристрою",
+          "notify": "Типи сповіщень"
+        },
+        "description": "Налаштуйте назву пристрою Dreame Care та налаштування сповіщення."
+      }
+    },
+    "error": {
+      "cannot_connect": "Не вдалося підключитися.",
+      "unsupported": "Пристрій не підтримується",
+      "credentials_incomplete": "Повноваження неповні, будь ласка, заповніть ім'я користувача, пароль та країну",
+      "login_error": "Не міг увійти, перевірити облікові дані.",
+      "no_devices": "У цьому рахунку на вибраній країні не знайдено підтримуваних пристроїв."
+    },
+    "abort": {
+      "cannot_connect": "Не вдалося підключитися."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Варіанти",
+        "description": "Налаштуйте налаштування сповіщення для інтеграції косарки Dreame.",
+        "data": {
+          "notify": "Типи сповіщень"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Статус",
+        "state": {
+          "no_status": "Немає статусу",
+          "mowing": "Скошування",
+          "standby": "Резервний",
+          "paused": "Призупинений",
+          "paused_due_to_errors": "Зупинившись через помилки",
+          "returning_to_station_to_charge": "Повернення на станцію для заряду",
+          "charging": "Зарядка",
+          "mapping": "Картографування",
+          "charging_complete": "Зарядка завершена",
+          "updating": "Оновлення"
+        }
+      },
+      "charging_status": {
+        "name": "Статус зарядки",
+        "state": {
+          "not_docked": "Не стикається",
+          "charging": "Зарядка",
+          "not_charging": "Не заряджається",
+          "charging_completed": "Зарядка завершена",
+          "return_to_charge": "Повернення до заряду"
+        }
+      },
+      "mowing_progress": {
+        "name": "Косіння прогресу"
+      },
+      "bluetooth_connection": {
+        "name": "Блюдот"
+      },
+      "dnd_status": {
+        "name": "Не турбувати"
+      },
+      "charging_schedule": {
+        "name": "Графік зарядки"
+      },
+      "timezone": {
+        "name": "Часовий пояс"
+      },
+      "temperature": {
+        "name": "Температура пристрою"
+      },
+      "bms_phase": {
+        "name": "Фаза BMS"
+      },
+      "device_code": {
+        "name": "Код пристрою"
+      },
+      "current_task": {
+        "name": "Поточне завдання"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Карта"
+      }
+    }
+  }
+}

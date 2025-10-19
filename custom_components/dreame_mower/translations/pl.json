@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Wybierz typ konta",
+        "description": "Wybierz typ konta dla integracji kosiarki Dreame.",
+        "data": {
+          "account_type": "Typ konta"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Nazwa użytkownika",
+          "password": "Hasło",
+          "country": "Kraj serwera"
+        },
+        "description": "Zaloguj się do chmury Dreamehome."
+      },
+      "mova": {
+        "data": {
+          "username": "Nazwa użytkownika",
+          "password": "Hasło",
+          "country": "Kraj serwera"
+        },
+        "description": "Zaloguj się do chmury Movahome."
+      },
+      "devices": {
+        "data": {
+          "devices": "Obsługiwane urządzenia"
+        },
+        "description": "Wybierz urządzenie Dreame Mower, które chcesz skonfigurować."
+      },
+      "options": {
+        "data": {
+          "name": "Nazwa urządzenia",
+          "notify": "Typy powiadomień"
+        },
+        "description": "Skonfiguruj nazwę urządzenia Dreame Mower i preferencje powiadomień."
+      }
+    },
+    "error": {
+      "cannot_connect": "Nie udało się połączyć.",
+      "unsupported": "Urządzenie nie jest obsługiwane",
+      "credentials_incomplete": "Poświadczenia niekompletne, wypełnij nazwę użytkownika, hasło i kraj",
+      "login_error": "Nie można się zalogować, sprawdzić poświadczenia.",
+      "no_devices": "Brak obsługiwanych urządzeń znalezionych na tym koncie w wybranym kraju."
+    },
+    "abort": {
+      "cannot_connect": "Nie udało się połączyć."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje",
+        "description": "Skonfiguruj ustawienia powiadomień integracji kosiarki Dreame.",
+        "data": {
+          "notify": "Typy powiadomień"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Status",
+        "state": {
+          "no_status": "Brak statusu",
+          "mowing": "Kośba",
+          "standby": "Standby",
+          "paused": "Zatrzymany",
+          "paused_due_to_errors": "Zatrzymany z powodu błędów",
+          "returning_to_station_to_charge": "Powrót do stacji, aby obciążyć",
+          "charging": "Ładowanie",
+          "mapping": "Mapowanie",
+          "charging_complete": "Ładowanie kompletne",
+          "updating": "Aktualizacja"
+        }
+      },
+      "charging_status": {
+        "name": "Status ładowania",
+        "state": {
+          "not_docked": "Nie zadokowany",
+          "charging": "Ładowanie",
+          "not_charging": "Nie ładować",
+          "charging_completed": "Ładowanie zakończone",
+          "return_to_charge": "Powrót do opłaty"
+        }
+      },
+      "mowing_progress": {
+        "name": "Postęp koszenia"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "Nie przeszkadzać"
+      },
+      "charging_schedule": {
+        "name": "Harmonogram ładowania"
+      },
+      "timezone": {
+        "name": "Strefa czasowa"
+      },
+      "temperature": {
+        "name": "Temperatura urządzenia"
+      },
+      "bms_phase": {
+        "name": "Faza BMS"
+      },
+      "device_code": {
+        "name": "Kod urządzenia"
+      },
+      "current_task": {
+        "name": "Obecne zadanie"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Mapa"
+      }
+    }
+  }
+}

@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Выберите тип учетной записи",
+        "description": "Выберите тип учетной записи для интеграции Dreame Bower.",
+        "data": {
+          "account_type": "Тип учетной записи"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Имя пользователя",
+          "password": "Пароль",
+          "country": "Сервер страна"
+        },
+        "description": "Войдите в облако DreameHome."
+      },
+      "mova": {
+        "data": {
+          "username": "Имя пользователя",
+          "password": "Пароль",
+          "country": "Сервер страна"
+        },
+        "description": "Войдите в облако Movahome."
+      },
+      "devices": {
+        "data": {
+          "devices": "Поддерживаемые устройства"
+        },
+        "description": "Пожалуйста, выберите устройство Dreame Mower, которое вы хотите настроить."
+      },
+      "options": {
+        "data": {
+          "name": "Название устройства",
+          "notify": "Типы уведомлений"
+        },
+        "description": "Настройте название устройства Dreame Mower и предпочтения уведомления."
+      }
+    },
+    "error": {
+      "cannot_connect": "Не удалось подключиться.",
+      "unsupported": "Устройство не поддерживается",
+      "credentials_incomplete": "Учетные данные неполны, пожалуйста, заполните имя пользователя, пароль и страну",
+      "login_error": "Не могу войти в систему, проверить учетные данные.",
+      "no_devices": "В этой учетной записи не найдено поддерживаемых устройств в выбранной стране."
+    },
+    "abort": {
+      "cannot_connect": "Не удалось подключиться."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Параметры",
+        "description": "Настройте настройки уведомления для интеграции Dreame Mower.",
+        "data": {
+          "notify": "Типы уведомлений"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Статус",
+        "state": {
+          "no_status": "Нет статуса",
+          "mowing": "Косит",
+          "standby": "Поддержка",
+          "paused": "Приостановлен",
+          "paused_due_to_errors": "Приостановлен из-за ошибок",
+          "returning_to_station_to_charge": "Возвращение на станцию для зарядки",
+          "charging": "Зарядка",
+          "mapping": "Картирование",
+          "charging_complete": "Зарядка завершена",
+          "updating": "Обновление"
+        }
+      },
+      "charging_status": {
+        "name": "Статус зарядки",
+        "state": {
+          "not_docked": "Не пристыковано",
+          "charging": "Зарядка",
+          "not_charging": "Не заряжает",
+          "charging_completed": "Зарядка завершена",
+          "return_to_charge": "Возвращение к зарядке"
+        }
+      },
+      "mowing_progress": {
+        "name": "Загрязнение прогресса"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "Просьба не беспокоить"
+      },
+      "charging_schedule": {
+        "name": "График зарядки"
+      },
+      "timezone": {
+        "name": "Часовой пояс"
+      },
+      "temperature": {
+        "name": "Температура устройства"
+      },
+      "bms_phase": {
+        "name": "Фаза BMS"
+      },
+      "device_code": {
+        "name": "Код устройства"
+      },
+      "current_task": {
+        "name": "Текущая задача"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Карта"
+      }
+    }
+  }
+}

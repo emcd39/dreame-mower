@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Choisissez le type de compte",
+        "description": "Sélectionnez votre type de compte pour l'intégration DreamE Mower.",
+        "data": {
+          "account_type": "Type de compte"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe",
+          "country": "Pays de serveur"
+        },
+        "description": "Connectez-vous au nuage de Drenemehome."
+      },
+      "mova": {
+        "data": {
+          "username": "Nom d'utilisateur",
+          "password": "Mot de passe",
+          "country": "Pays de serveur"
+        },
+        "description": "Connectez-vous au nuage Movahome."
+      },
+      "devices": {
+        "data": {
+          "devices": "Appareils pris en charge"
+        },
+        "description": "Veuillez sélectionner l'appareil DreamE Tipe que vous souhaitez configurer."
+      },
+      "options": {
+        "data": {
+          "name": "Nom de l'appareil",
+          "notify": "Types de notification"
+        },
+        "description": "Configurez le nom de votre périphérique de tondeuse DreamE et les préférences de notification."
+      }
+    },
+    "error": {
+      "cannot_connect": "Échec de la connexion.",
+      "unsupported": "L'appareil n'est pas pris en charge",
+      "credentials_incomplete": "Informations incomplètes, veuillez remplir le nom d'utilisateur, le mot de passe et le pays",
+      "login_error": "Je ne pouvais pas se connecter, vérifier les informations d'identification.",
+      "no_devices": "Aucun dispositif pris en charge trouvé dans ce compte sur le pays sélectionné."
+    },
+    "abort": {
+      "cannot_connect": "Échec de la connexion."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Options",
+        "description": "Configurer les paramètres de notification pour l'intégration de la tondeuse DreamE.",
+        "data": {
+          "notify": "Types de notification"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Statut",
+        "state": {
+          "no_status": "Pas de statut",
+          "mowing": "Fauchage",
+          "standby": "Attendre",
+          "paused": "Interrompu",
+          "paused_due_to_errors": "Pause en raison d'erreurs",
+          "returning_to_station_to_charge": "Retour à la station pour charger",
+          "charging": "Chargement",
+          "mapping": "Cartographie",
+          "charging_complete": "Charge complète",
+          "updating": "Mise à jour"
+        }
+      },
+      "charging_status": {
+        "name": "Statut de charge",
+        "state": {
+          "not_docked": "Pas amarré",
+          "charging": "Chargement",
+          "not_charging": "Ne pas charger",
+          "charging_completed": "Charge terminée",
+          "return_to_charge": "Retour à la charge"
+        }
+      },
+      "mowing_progress": {
+        "name": "Tonde progressive"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "Ne pas déranger"
+      },
+      "charging_schedule": {
+        "name": "Calendrier de charge"
+      },
+      "timezone": {
+        "name": "Fuseau horaire"
+      },
+      "temperature": {
+        "name": "Température du dispositif"
+      },
+      "bms_phase": {
+        "name": "Phase BMS"
+      },
+      "device_code": {
+        "name": "Code de périphérique"
+      },
+      "current_task": {
+        "name": "Tâche actuelle"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Carte"
+      }
+    }
+  }
+}

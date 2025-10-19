@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Scegli il tipo di account",
+        "description": "Seleziona il tipo di account per l'integrazione del tosaerba da sogno.",
+        "data": {
+          "account_type": "Tipo di account"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Nome utente",
+          "password": "Password",
+          "country": "Paese del server"
+        },
+        "description": "Accedi alla nuvola di Dreamehome."
+      },
+      "mova": {
+        "data": {
+          "username": "Nome utente",
+          "password": "Password",
+          "country": "Paese del server"
+        },
+        "description": "Accedi al cloud Movahome."
+      },
+      "devices": {
+        "data": {
+          "devices": "Dispositivi supportati"
+        },
+        "description": "Seleziona il dispositivo Dreame Mower che si desidera configurare."
+      },
+      "options": {
+        "data": {
+          "name": "Nome del dispositivo",
+          "notify": "Tipi di notifica"
+        },
+        "description": "Configura il nome del dispositivo Dreame Mower e le preferenze di notifica."
+      }
+    },
+    "error": {
+      "cannot_connect": "Impossibile connettersi.",
+      "unsupported": "Il dispositivo non è supportato",
+      "credentials_incomplete": "Credenziali incomplete, compila nome utente, password e paese",
+      "login_error": "Impossibile accedere, controllare le credenziali.",
+      "no_devices": "Nessun dispositivo supportato trovati in questo account in paese selezionato."
+    },
+    "abort": {
+      "cannot_connect": "Impossibile connettersi."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni",
+        "description": "Configurare le impostazioni di notifica per l'integrazione del tosaerba da sogno.",
+        "data": {
+          "notify": "Tipi di notifica"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Stato",
+        "state": {
+          "no_status": "Nessuno status",
+          "mowing": "Falciatura",
+          "standby": "Stand-by",
+          "paused": "In pausa",
+          "paused_due_to_errors": "In pausa a causa di errori",
+          "returning_to_station_to_charge": "Tornando alla stazione per caricare",
+          "charging": "Carica",
+          "mapping": "Mappatura",
+          "charging_complete": "Accusa completa",
+          "updating": "Aggiornamento"
+        }
+      },
+      "charging_status": {
+        "name": "Stato di ricarica",
+        "state": {
+          "not_docked": "Non ancorato",
+          "charging": "Carica",
+          "not_charging": "Non ricarica",
+          "charging_completed": "Addebito completato",
+          "return_to_charge": "Torna alla carica"
+        }
+      },
+      "mowing_progress": {
+        "name": "Falciatura progresso"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "Non disturbare"
+      },
+      "charging_schedule": {
+        "name": "Programma di ricarica"
+      },
+      "timezone": {
+        "name": "Fuso orario"
+      },
+      "temperature": {
+        "name": "Temperatura del dispositivo"
+      },
+      "bms_phase": {
+        "name": "Fase bm"
+      },
+      "device_code": {
+        "name": "Codice del dispositivo"
+      },
+      "current_task": {
+        "name": "Attività attuale"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Mappa"
+      }
+    }
+  }
+}

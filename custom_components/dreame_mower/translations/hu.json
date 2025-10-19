@@ -1,0 +1,124 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Válassza a Fiók típusát",
+        "description": "Válassza ki a fiók típusát a Dreame fűnyíró integrációjához.",
+        "data": {
+          "account_type": "Számla típus"
+        }
+      },
+      "dreame": {
+        "data": {
+          "username": "Felhasználónév",
+          "password": "Jelszó",
+          "country": "Szerver ország"
+        },
+        "description": "Jelentkezzen be a DreameHome felhőbe."
+      },
+      "mova": {
+        "data": {
+          "username": "Felhasználónév",
+          "password": "Jelszó",
+          "country": "Szerver ország"
+        },
+        "description": "Jelentkezzen be a Movahome felhőbe."
+      },
+      "devices": {
+        "data": {
+          "devices": "Támogatott eszközök"
+        },
+        "description": "Kérjük, válassza ki a beállítani kívánt Dreame fűnyíró eszközt."
+      },
+      "options": {
+        "data": {
+          "name": "Eszköz neve",
+          "notify": "Értesítési típusok"
+        },
+        "description": "Konfigurálja a Dreame fűnyíró eszköz nevét és értesítési preferenciáit."
+      }
+    },
+    "error": {
+      "cannot_connect": "Nem sikerült csatlakozni.",
+      "unsupported": "Az eszközt nem támogatják",
+      "credentials_incomplete": "A hitelesítő adatok hiányosak, kérjük, töltse ki a felhasználónevet, a jelszót és az országot",
+      "login_error": "Nem tudott bejelentkezni, ellenőrizze a hitelesítő adatokat.",
+      "no_devices": "A kiválasztott országban nem található támogatott eszköz."
+    },
+    "abort": {
+      "cannot_connect": "Nem sikerült csatlakozni."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Lehetőségek",
+        "description": "Konfigurálja a Dreame fűnyíró integráció értesítési beállításait.",
+        "data": {
+          "notify": "Értesítési típusok"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "status": {
+        "name": "Állapot",
+        "state": {
+          "no_status": "Nincs státusz",
+          "mowing": "Kaszálás",
+          "standby": "Készenlétben lévő",
+          "paused": "Megállt",
+          "paused_due_to_errors": "A hibák miatt szüneteltetés",
+          "returning_to_station_to_charge": "Visszatérve az állomásra, hogy töltse fel",
+          "charging": "Töltés",
+          "mapping": "Feltérképezés",
+          "charging_complete": "Töltés teljes",
+          "updating": "Frissítés"
+        }
+      },
+      "charging_status": {
+        "name": "Töltési állapot",
+        "state": {
+          "not_docked": "Nem dokkolt",
+          "charging": "Töltés",
+          "not_charging": "Nem töltés",
+          "charging_completed": "A töltés befejeződött",
+          "return_to_charge": "Visszatérés a töltéshez"
+        }
+      },
+      "mowing_progress": {
+        "name": "Kaszálási haladás"
+      },
+      "bluetooth_connection": {
+        "name": "Bluetooth"
+      },
+      "dnd_status": {
+        "name": "Ne zavarjon"
+      },
+      "charging_schedule": {
+        "name": "Töltési ütemterv"
+      },
+      "timezone": {
+        "name": "Időzóna"
+      },
+      "temperature": {
+        "name": "Eszközhőmérséklet"
+      },
+      "bms_phase": {
+        "name": "Bms fázis"
+      },
+      "device_code": {
+        "name": "Eszközkód"
+      },
+      "current_task": {
+        "name": "Aktuális feladat"
+      }
+    },
+    "camera": {
+      "map_camera": {
+        "name": "Térkép"
+      }
+    }
+  }
+}

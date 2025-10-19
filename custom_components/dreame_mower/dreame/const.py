@@ -1,0 +1,157 @@
+"""Constants for Dreame Mower Device Implementation."""
+
+from __future__ import annotations
+from typing import NamedTuple
+import logging
+
+from homeassistant.components.lawn_mower import LawnMowerActivity  # type: ignore[attr-defined]
+
+_LOGGER = logging.getLogger(__name__)
+
+class PropertyIdentifier(NamedTuple):
+    """Property identifier with siid, piid values and property name."""
+    siid: int
+    piid: int
+    name: str
+    
+    def matches(self, siid: int, piid: int) -> bool:
+        """Check if given siid and piid match this property identifier."""
+        return self.siid == siid and self.piid == piid
+
+
+class ActionIdentifier(NamedTuple):
+    """Action identifier with siid, aiid values and action name."""
+    siid: int
+    aiid: int
+    name: str
+
+    def matches(self, siid: int, aiid: int) -> bool:
+        """Check if given siid and aiid match this action identifier."""
+        return self.siid == siid and self.aiid == aiid
+
+
+class EventIdentifier(NamedTuple):
+    """Event identifier with siid, eiid values and event name."""
+    siid: int
+    eiid: int
+    name: str
+
+    def matches(self, siid: int, eiid: int) -> bool:
+        """Check if given siid and eiid match this event identifier."""
+        return self.siid == siid and self.eiid == eiid
+
+
+# Device property identifiers
+PROPERTY_1_1 = PropertyIdentifier(siid=1, piid=1, name="property_1_1")
+FIRMWARE_INSTALL_STATE_PROPERTY = PropertyIdentifier(siid=1, piid=2, name="firmware_install_state")
+FIRMWARE_DOWNLOAD_PROGRESS_PROPERTY = PropertyIdentifier(siid=1, piid=3, name="firmware_download_progress")
+POSE_COVERAGE_PROPERTY = PropertyIdentifier(siid=1, piid=4, name="pose_coverage")
+SERVICE1_PROPERTY_50 = PropertyIdentifier(siid=1, piid=50, name="service1_property_50")
+SERVICE1_PROPERTY_51 = PropertyIdentifier(siid=1, piid=51, name="service1_property_51")
+SERVICE1_COMPLETION_FLAG_PROPERTY = PropertyIdentifier(siid=1, piid=52, name="service1_completion_flag")
+BLUETOOTH_PROPERTY = PropertyIdentifier(siid=1, piid=53, name="bluetooth_connected")
+
+STATUS_PROPERTY = PropertyIdentifier(siid=2, piid=1, name="status")
+DEVICE_CODE_PROPERTY = PropertyIdentifier(siid=2, piid=2, name="device_code")
+SCHEDULING_TASK_PROPERTY = PropertyIdentifier(siid=2, piid=50, name="scheduling_task")
+SCHEDULING_DND_PROPERTY = PropertyIdentifier(siid=2, piid=51, name="scheduling_dnd")
+SCHEDULING_SUMMARY_PROPERTY = PropertyIdentifier(siid=2, piid=52, name="scheduling_summary")
+MOWER_CONTROL_STATUS_PROPERTY = PropertyIdentifier(siid=2, piid=56, name="mower_control_status")
+POWER_STATE_PROPERTY = PropertyIdentifier(siid=2, piid=57, name="power_state")
+SERVICE2_PROPERTY_60 = PropertyIdentifier(siid=2, piid=60, name="service2_property_60")
+SERVICE2_PROPERTY_62 = PropertyIdentifier(siid=2, piid=62, name="service2_property_62")
+SERVICE2_PROPERTY_63 = PropertyIdentifier(siid=2, piid=63, name="service2_property_63")
+SERVICE2_PROPERTY_64 = PropertyIdentifier(siid=2, piid=64, name="service2_property_64")
+SERVICE2_PROPERTY_65 = PropertyIdentifier(siid=2, piid=65, name="service2_property_65")
+
+BATTERY_PROPERTY = PropertyIdentifier(siid=3, piid=1, name="battery_percent")
+CHARGING_STATUS_PROPERTY = PropertyIdentifier(siid=3, piid=2, name="charging_status")
+
+TASK_STATUS_PROPERTY = PropertyIdentifier(siid=5, piid=104, name="task_status")
+SERVICE5_PROPERTY_105 = PropertyIdentifier(siid=5, piid=105, name="service5_property_105")
+BMS_PHASE_PROPERTY = PropertyIdentifier(siid=5, piid=106, name="bms_phase")
+SERVICE5_ENERGY_INDEX_PROPERTY = PropertyIdentifier(siid=5, piid=107, name="service5_energy_index")
+SERVICE5_PROPERTY_108 = PropertyIdentifier(siid=5, piid=108, name="service5_property_108")
+
+# Property 99:10 provides file paths for downloadable files from the cloud, including:
+# - Firmware/OTA update packages (when firmware updates are available)
+# - Device log files (when user selects "Report logs" in the app)
+# Files are automatically downloaded when this property changes
+DEVICE_FILE_PATH_PROPERTY = PropertyIdentifier(siid=99, piid=10, name="device_file_path")
+
+# Device event identifiers
+FIRMWARE_VALIDATION_EVENT = EventIdentifier(siid=1, eiid=1, name="firmware_validation")
+MISSION_COMPLETION_EVENT = EventIdentifier(siid=4, eiid=1, name="mission_completion")
+
+# Device action identifiers (siid 5)
+ACTION_START_MOWING = ActionIdentifier(siid=5, aiid=1, name="start_mowing")
+ACTION_STOP = ActionIdentifier(siid=5, aiid=2, name="stop")
+ACTION_DOCK = ActionIdentifier(siid=5, aiid=3, name="dock")
+ACTION_PAUSE = ActionIdentifier(siid=5, aiid=4, name="pause")
+
+# Device status mapping for STATUS_PROPERTY (2:1)
+# 
+# Charging State Refinement (via correlation with CHARGING_STATUS_PROPERTY 3:2):
+# State 6 (charging) correlates with 3:2=1 (active_charging) - top-off/current flowing pulses
+# State 13 (charging_complete) correlates with 3:2=2 (maintain) - balance/trickle plateau
+# This refinement enables duty cycle metrics and distinguishes active vs maintenance charging.
+# Contingency analysis shows >99.99% purity for these mappings across multi-hour sessions.
+#
+# State progression during charging:
+#   State 5 (returning) → State 6 (active charging, 3:2=1) → State 13 (maintain, 3:2=2)
+#
+STATUS_MAPPING = {
+    0: "no_status",
+    1: "mowing",
+    2: "standby", 
+    3: "paused",
+    4: "paused_due_to_errors",
+    5: "returning_to_station_to_charge",
+    6: "charging",
+    11: "mapping",
+    13: "charging_complete",
+    14: "updating"
+}
+
+def map_status_to_activity(status: int) -> LawnMowerActivity:
+    """Map device status code to LawnMowerActivity.
+
+    Keep mapping logic colocated with STATUS_MAPPING so behaviour is consistent
+    across the integration.
+    """
+    if status in [1]:  # Mowing
+        return LawnMowerActivity.MOWING
+    elif status in [2, 3]:  # Paused and Standby
+        return LawnMowerActivity.PAUSED
+    elif status in [4]:  # Paused due to errors
+        return LawnMowerActivity.ERROR
+    elif status in [5]:  # Returning to station to charge
+        return LawnMowerActivity.RETURNING
+    elif status in [6, 11, 13, 14]:  # Charging, Mapping, Charging complete, Updating
+        return LawnMowerActivity.DOCKED
+    else:
+        _LOGGER.warning("Unknown status %s, defaulting to DOCKED", status)
+        return LawnMowerActivity.DOCKED
+
+# Charging status mapping for CHARGING_STATUS_PROPERTY
+CHARGING_STATUS_MAPPING: dict[int, str] = {
+    0: "not_docked",
+    1: "charging",
+    2: "not_charging",
+    3: "charging_completed",
+    5: "return_to_charge",
+}
+
+# Firmware install state mapping for FIRMWARE_INSTALL_STATE_PROPERTY
+FIRMWARE_INSTALL_STATE_MAPPING: dict[int, str] = {
+    2: "new_firmware_available",
+    3: "installing_firmware_after_download",
+
+    # Note: Value 4 has been observed in issue #134 during a failed firmware download attempt.
+    # Meaning is currently unknown - may indicate "firmware_download_failed" or similar state.
+    # 4: "firmware_download_failed" - See issue #134
+}
+
+# Individual property names
+PROPERTY_FIRMWARE = "firmware"
+PROPERTY_TEMPERATURE = "temperature"
