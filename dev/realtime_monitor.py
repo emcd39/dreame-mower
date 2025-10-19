@@ -550,27 +550,24 @@ class RealtimeMonitor:
             # Build output lines
             lines = [status_line]
             if recent_msgs:
-                lines.append(f"\n{Colors.BRIGHT_YELLOW}Recent MQTT:{Colors.RESET}")
+                lines.append(f"{Colors.BRIGHT_YELLOW}Recent MQTT:{Colors.RESET}")
                 for msg in recent_msgs:
                     lines.append(f"  {Colors.CYAN}→{Colors.RESET} {msg}")
-            
-            output = "\n".join(lines)
             
             # Move cursor up to overwrite previous output (except on first display)
             if not first_display and prev_lines > 0:
                 print(CURSOR_UP.format(prev_lines), end="")
             
             # Clear and print each line
-            lines_to_print = output.split("\n")
-            for i, line in enumerate(lines_to_print):
+            for line in lines:
                 print(CLEAR_LINE + CURSOR_START + line)
             
             # If new output has fewer lines, clear the remaining old lines
-            if len(lines_to_print) < prev_lines:
-                for _ in range(prev_lines - len(lines_to_print)):
+            if len(lines) < prev_lines:
+                for _ in range(prev_lines - len(lines)):
                     print(CLEAR_LINE)
             
-            prev_lines = len(lines_to_print)
+            prev_lines = len(lines)
             first_display = False
         
         # ensure terminal moves to next line when stopping
