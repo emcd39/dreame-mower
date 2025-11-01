@@ -51,7 +51,7 @@ import base64
 import struct
 import re
 from pathlib import Path
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Union, Optional
 
 # Add the parent directory to the path
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -63,8 +63,8 @@ logging.basicConfig(level=logging.INFO, format="%(levelname)s:%(name)s:%(message
 logger = logging.getLogger(__name__)
 
 class DeviceDataAnalyzer:
-    def __init__(self):
-        self.protocol = None
+    def __init__(self) -> None:
+        self.protocol: Optional[DreameMowerCloudDevice] = None
 
     def decode_schedule_data(self, encoded_data: str) -> Union[Dict[str, Any], str]:
         """Decode base64 encoded schedule data."""
@@ -869,8 +869,9 @@ class DeviceDataAnalyzer:
             # Use REST API getDeviceData endpoint to retrieve all hierarchical device data
             # This replaces the legacy prop.s_ai_config approach with current REST API call
             print("🎯 Calling REST API getDeviceData endpoint...")
+            s = self.protocol._cloud_base._api_strings
             api_response = self.protocol._cloud_base._api_call(
-                f"{self.protocol._cloud_base._api_strings.user_iot_service}/{self.protocol._cloud_base._api_strings.iot_user_data_service}/{self.protocol._cloud_base._api_strings.get_device_data_endpoint}",
+                f"{s[23]}/{s[26]}/{s[44]}",
                 {"did": self.protocol._device_id}
             )
             
