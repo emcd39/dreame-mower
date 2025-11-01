@@ -1,8 +1,8 @@
 # Test environment requirements
 # Tested with Python 3.13.7
-# pytest-homeassistant-custom-component v0.13.278 requires Python 3.13+
-# Provides Home Assistant 2025.9.1 with ConfigEntry.subentries_data support
-# Latest version from main branch (commit: 90ea5540a296a9f5e09c3b509db1cc73bd910502)
+# pytest-homeassistant-custom-component v0.13.291 requires Python 3.13+
+# Provides Home Assistant 2025.11.0b1 with latest API features
+# Latest version from main branch
 git+https://github.com/MatthewFlamm/pytest-homeassistant-custom-component.git
 python-miio==0.5.12
 pycryptodome==3.23.0

@@ -67,6 +67,7 @@ class DreameMowerCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             _LOGGER,
             name=DOMAIN,
             update_interval=None,  # No polling - use real-time updates from device
+            config_entry=entry,  # Required for async_config_entry_first_refresh
         )
         
         # Register callback to receive device property updates
