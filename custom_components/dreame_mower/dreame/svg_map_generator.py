@@ -414,40 +414,38 @@ def generate_svg_map_image(data: Dict[str, Any], historical_file_path: str | Non
         
         if map_items:
             # The map data is a list of dictionaries, each with a 'data' key
-            all_segments_data = []
-            all_track_data = []
+            # Process each map item separately to preserve zone boundaries
             for i, item in enumerate(map_items):
                 item_data = item.get("data", [])
                 item_track = item.get("track", [])
-                all_segments_data.extend(item_data)
-                all_track_data.extend(item_track)
                 
-            all_points.extend(all_segments_data)
-            all_points.extend(all_track_data)
-
-            # Parse main mowing path from "data"
-            current_segment: List[List[int]] = []
-            for point in all_segments_data:
-                if point[0] == 2147483647 and point[1] == 2147483647:
-                    if len(current_segment) > 1:
-                        segments.append(current_segment)
-                    current_segment = []
-                else:
-                    current_segment.append(point)
-            if len(current_segment) > 1:
-                segments.append(current_segment)
-
-            # Parse additional path from "track"
-            current_track_segment: List[List[int]] = []
-            for point in all_track_data:
-                if point[0] == 2147483647 and point[1] == 2147483647:
-                    if len(current_track_segment) > 1:
-                        track_segments.append(current_track_segment)
-                    current_track_segment = []
-                else:
-                    current_track_segment.append(point)
-            if len(current_track_segment) > 1:
-                track_segments.append(current_track_segment)
+                # Add points for bounds calculation
+                all_points.extend(item_data)
+                all_points.extend(item_track)
+                
+                # Parse main mowing path from "data" - split by sentinel values within each item
+                current_segment: List[List[int]] = []
+                for point in item_data:
+                    if point[0] == 2147483647 and point[1] == 2147483647:
+                        if len(current_segment) > 1:
+                            segments.append(current_segment)
+                        current_segment = []
+                    else:
+                        current_segment.append(point)
+                if len(current_segment) > 1:
+                    segments.append(current_segment)
+                
+                # Parse additional path from "track" - split by sentinel values within each item
+                current_track_segment: List[List[int]] = []
+                for point in item_track:
+                    if point[0] == 2147483647 and point[1] == 2147483647:
+                        if len(current_track_segment) > 1:
+                            track_segments.append(current_track_segment)
+                        current_track_segment = []
+                    else:
+                        current_track_segment.append(point)
+                if len(current_track_segment) > 1:
+                    track_segments.append(current_track_segment)
 
         # Add obstacle points
         obstacles = data.get("obstacle", [])

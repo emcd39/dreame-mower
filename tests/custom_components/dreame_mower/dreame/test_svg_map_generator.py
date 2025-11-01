@@ -281,6 +281,60 @@ class TestFinishSvgDocument:
         assert "\n" in result or len(svg_lines) <= 1  # Contains newlines or is very short
 
 
+class TestMapBoundaryMultiZone:
+    """Test suite for generating SVG from multi-zone map boundary data."""
+
+    def test_generate_svg_map_boundary_zone_separation(self, mock_coordinator):
+        """Test generating SVG with proper zone separation in map boundaries.
+        
+        This test verifies that map boundaries with multiple disconnected zones
+        are rendered with proper move operations (M) between zones, rather than
+        continuous line operations (L) that would draw connecting lines.
+        
+        Addresses issue where boundaries were drawn as continuous paths across
+        disconnected zones instead of separate zone outlines.
+        """
+        # Load multi-zone map boundary test data
+        map_data_file = TEST_DATA_DIR / "map_boundary_multi_zone.json"
+        with open(map_data_file, 'r') as f:
+            map_data = json.load(f)
+        
+        # Generate SVG with no rotation
+        result = generate_svg_map_image(map_data, None, mock_coordinator, rotation=0)
+        
+        # Save output for visual inspection
+        output_svg_file = TEST_DATA_DIR / "map_boundary_multi_zone_output.svg"
+        with open(output_svg_file, 'wb') as f:
+            f.write(result)
+        
+        # Verify the file was written successfully
+        assert output_svg_file.exists()
+        assert output_svg_file.stat().st_size > 0
+        
+        # Basic validation that it's valid SVG
+        svg_output = result.decode('utf-8')
+        assert svg_output.startswith('<?xml')
+        assert '<svg' in svg_output
+        assert '</svg>' in svg_output
+        
+        # Verify it contains expected map elements
+        assert 'Dreame Mower Map' in svg_output
+        
+        # Verify the critical fix: map boundaries should have multiple move operations
+        # indicating proper zone separation rather than continuous lines between zones
+        import re
+        map_boundary_paths = re.findall(r'<path[^>]*d="([^"]*)"[^>]*stroke="#006400"', svg_output)
+        assert len(map_boundary_paths) > 0, "Should contain map boundary path"
+        
+        # Count move operations (M commands) in the map boundary path
+        move_commands = re.findall(r' M ', map_boundary_paths[0])
+        assert len(move_commands) >= 2, (
+            f"Map boundary should have multiple move operations for zone separation, "
+            f"but found only {len(move_commands)} move commands. "
+            f"This indicates zones may be incorrectly connected with continuous lines."
+        )
+
+
 class TestMapRotation:
     """Test suite for map rotation functionality."""
 
