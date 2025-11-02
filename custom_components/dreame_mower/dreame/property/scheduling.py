@@ -2,7 +2,6 @@
 
 This module provides parsing and handling for Service 2 scheduling properties:
 - 2:50 - Mission task descriptor (TASK object with mission details)
-- 2:51 - Generic settings change acknowledgment (reports back when any setting is changed)
 - 2:52 - Mission completion summary (currently empty, future use)
 
 These properties manage mission lifecycle and completion tracking.
@@ -10,10 +9,10 @@ These properties manage mission lifecycle and completion tracking.
 
 from __future__ import annotations
 
-import json
 import logging
 from typing import Dict, Any
 from enum import Enum
+from ..const import SCHEDULING_TASK_PROPERTY, SCHEDULING_SUMMARY_PROPERTY
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -134,41 +133,6 @@ class TaskHandler:
         return self._elapsed_time
 
 
-class SettingsChangeHandler:
-    """Handler for generic settings change acknowledgment property (2:51).
-    
-    This property serves as a generic 'echo back' mechanism when any device setting
-    is changed. It reports back information about the changed setting but is not
-    tied to any specific feature.
-    """
-    
-    def __init__(self) -> None:
-        """Initialize settings change handler."""
-        self._last_value: Dict[str, Any] | None = None
-    
-    def parse_value(self, value: Any) -> bool:
-        """Parse and log settings change acknowledgment."""
-        try:
-            if not isinstance(value, dict):
-                _LOGGER.warning("Invalid settings change value type: %s, value: %s", type(value), value)
-                return False
-            
-            self._last_value = value
-            
-            # Log the settings change as info with JSON content
-            _LOGGER.info("Settings change acknowledged (2:51): %s", json.dumps(value))
-            return True
-                
-        except Exception as ex:
-            _LOGGER.error("Failed to parse settings change acknowledgment: %s, value: %s", ex, value)
-            return False
-    
-    @property
-    def last_value(self) -> Dict[str, Any] | None:
-        """Return last received settings change data."""
-        return self._last_value.copy() if self._last_value else None
-
-
 class SummaryHandler:
     """Handler for mission completion summary property (2:52)."""
     
@@ -212,38 +176,19 @@ class SummaryHandler:
 
 
 class SchedulingPropertyHandler:
-    """Combined handler for all scheduling properties (2:50, 2:51, 2:52)."""
+    """Combined handler for scheduling properties (2:50, 2:52)."""
     
     def __init__(self) -> None:
         """Initialize scheduling property handler."""
         self._task_handler = TaskHandler()
-        self._settings_change_handler = SettingsChangeHandler()
         self._summary_handler = SummaryHandler()
     
     def handle_property_update(self, siid: int, piid: int, value: Any, notify_callback) -> bool:
-        """Handle any scheduling property update with unified logic.
-        
-        This is the main entry point for all scheduling properties (2:50, 2:51, 2:52).
-        
-        Args:
-            siid: Service instance ID
-            piid: Property instance ID  
-            value: Property value from MQTT
-            notify_callback: Callback function for property change notifications
-            
-        Returns:
-            True if property was handled successfully, False otherwise
-        """
-        from ..const import SCHEDULING_TASK_PROPERTY, SCHEDULING_DND_PROPERTY, SCHEDULING_SUMMARY_PROPERTY
-        
+        """Handle scheduling property update with unified logic."""
         try:
             # Handle task descriptor (2:50)
             if SCHEDULING_TASK_PROPERTY.matches(siid, piid):
                 return self._handle_task_property(value, notify_callback)
-            
-            # Handle settings change acknowledgment (2:51)  
-            elif SCHEDULING_DND_PROPERTY.matches(siid, piid):
-                return self._handle_settings_change_property(value, notify_callback)
             
             # Handle summary (2:52)
             elif SCHEDULING_SUMMARY_PROPERTY.matches(siid, piid):
@@ -259,8 +204,6 @@ class SchedulingPropertyHandler:
     
     def _handle_task_property(self, value: Any, notify_callback) -> bool:
         """Handle mission task descriptor (2:50)."""
-        from ..const import SCHEDULING_TASK_PROPERTY
-        
         if self._task_handler.parse_value(value):
             task_data = self._task_handler.get_notification_data()
             notify_callback(SCHEDULING_TASK_PROPERTY.name, task_data)
@@ -270,15 +213,8 @@ class SchedulingPropertyHandler:
             _LOGGER.warning("Failed to parse task descriptor value: %s", value)
             return False
     
-    def _handle_settings_change_property(self, value: Any, notify_callback) -> bool:
-        """Handle generic settings change acknowledgment (2:51)."""
-        # Simply parse and log - no specific handling needed
-        return self._settings_change_handler.parse_value(value)
-    
     def _handle_summary_property(self, value: Any, notify_callback) -> bool:
         """Handle mission completion summary (2:52)."""
-        from ..const import SCHEDULING_SUMMARY_PROPERTY
-        
         if self._summary_handler.parse_value(value):
             summary_data = self._summary_handler.get_notification_data()
             notify_callback(SCHEDULING_SUMMARY_PROPERTY.name, summary_data)

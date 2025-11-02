@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Zeitzone"
       },
-      "temperature": {
-        "name": "Gerätetemperatur"
-      },
       "bms_phase": {
         "name": "BMS -Phase"
       },

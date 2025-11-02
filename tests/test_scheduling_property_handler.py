@@ -5,15 +5,16 @@ from unittest.mock import Mock
 
 from custom_components.dreame_mower.dreame.const import (
     SCHEDULING_TASK_PROPERTY,
-    SCHEDULING_DND_PROPERTY,
     SCHEDULING_SUMMARY_PROPERTY,
 )
 from custom_components.dreame_mower.dreame.property.scheduling import (
     SchedulingPropertyHandler,
     TaskHandler,
-    SettingsChangeHandler,
     SummaryHandler,
     TaskType,
+)
+from custom_components.dreame_mower.dreame.property.property_misc import (
+    SettingsChangeHandler,
 )
 
 
@@ -238,25 +239,6 @@ class TestSchedulingPropertyHandler:
         assert task_data['type'] == 'TASK'
         assert task_data['execution_active'] is True
         assert task_data['coverage_target'] == 100
-
-    def test_handle_settings_change_property_mqtt_message(self):
-        """Test handling settings change property (2:51) - generic logging only."""
-        # Property 2:51 is now handled generically - just logs the JSON
-        
-        # Test with dict format
-        settings_value = {'start': 855, 'end': 858, 'value': 1}
-        result = self.handler.handle_property_update(2, 51, settings_value, self.notify_callback)
-        assert result is True
-        
-        # Test with timezone format
-        settings_value = {'time': '1757011214', 'tz': 'Europe/Rome'}
-        result = self.handler.handle_property_update(2, 51, settings_value, self.notify_callback)
-        assert result is True
-        
-        # Test with array format
-        settings_value = {'value': [15, 95, 0, 0, 1080, 480]}
-        result = self.handler.handle_property_update(2, 51, settings_value, self.notify_callback)
-        assert result is True
 
     def test_handle_summary_property_mqtt_message(self):
         """Test handling summary property from MQTT message format."""

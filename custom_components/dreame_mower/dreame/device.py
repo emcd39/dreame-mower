@@ -18,7 +18,7 @@ from datetime import datetime
 from .cloud.cloud_device import DreameMowerCloudDevice
 from .utils import download_file
 from .property import (
-    Property11Handler, 
+    MiscPropertyHandler,
     DeviceCodeHandler,
     SchedulingPropertyHandler,
     MowerControlPropertyHandler,
@@ -36,7 +36,6 @@ from .const import (
     STATUS_PROPERTY,
     BLUETOOTH_PROPERTY,
     SCHEDULING_TASK_PROPERTY,
-    SCHEDULING_DND_PROPERTY,
     SCHEDULING_SUMMARY_PROPERTY,
     MOWER_CONTROL_STATUS_PROPERTY,
     POWER_STATE_PROPERTY,
@@ -45,7 +44,6 @@ from .const import (
     SERVICE2_PROPERTY_63,
     SERVICE2_PROPERTY_64,
     SERVICE2_PROPERTY_65,
-    PROPERTY_1_1,
     FIRMWARE_INSTALL_STATE_PROPERTY,
     FIRMWARE_DOWNLOAD_PROGRESS_PROPERTY,
     POSE_COVERAGE_PROPERTY,
@@ -54,7 +52,6 @@ from .const import (
     SERVICE1_COMPLETION_FLAG_PROPERTY,
     STATUS_MAPPING,
     PROPERTY_FIRMWARE,
-    PROPERTY_TEMPERATURE,
     CHARGING_STATUS_PROPERTY,
     CHARGING_STATUS_MAPPING,
     TASK_STATUS_PROPERTY,
@@ -126,7 +123,6 @@ class DreameMowerDevice:
         
         # MQTT properties
         self._bluetooth_connected: bool | None = None
-        self._temperature: float | None = None
         self._charging_status: str | None = None
         self._ota_state: str | None = None
         self._device_file_path: str | None = None
@@ -137,7 +133,7 @@ class DreameMowerDevice:
         self._service1_completion_flag: bool = False
         
         # Property handlers
-        self._property_1_1_handler = Property11Handler()
+        self._misc_handler = MiscPropertyHandler()
         self._device_code_handler = DeviceCodeHandler()
         self._scheduling_handler = SchedulingPropertyHandler()
         self._mower_control_handler = MowerControlPropertyHandler()
@@ -233,11 +229,6 @@ class DreameMowerDevice:
         if task_handler.task_type is None:
             return None
         return task_handler.get_notification_data()
-
-    @property
-    def temperature(self) -> float | None:
-        """Return device temperature (live)."""
-        return self._temperature
 
     @property
     def charging_status(self) -> str | None:
@@ -505,9 +496,8 @@ class DreameMowerDevice:
                 if old_bluetooth != bluetooth_value:
                     self._notify_property_change(BLUETOOTH_PROPERTY.name, bluetooth_value)
             elif (SCHEDULING_TASK_PROPERTY.matches(siid, piid) or 
-                  SCHEDULING_DND_PROPERTY.matches(siid, piid) or 
                   SCHEDULING_SUMMARY_PROPERTY.matches(siid, piid)):
-                # Handle all scheduling properties (2:50, 2:51, 2:52) in unified handler
+                # Handle scheduling properties (2:50, 2:52) in unified handler
                 if not self._scheduling_handler.handle_property_update(siid, piid, message["value"], self._notify_property_change):
                     return False  # Parsing failed - treat as unhandled property
             elif MOWER_CONTROL_STATUS_PROPERTY.matches(siid, piid):
@@ -530,20 +520,6 @@ class DreameMowerDevice:
                     
                 except Exception as ex:
                     _LOGGER.error("Failed to parse pose coverage property: %s", ex)
-                    return False
-            elif PROPERTY_1_1.matches(siid, piid):
-                # Handle complex status property (property 1:1) with temperature data
-                try:
-                    old_temperature = self._temperature
-                    if not self._property_1_1_handler.parse_value(message["value"]):
-                        return False  # Parsing failed
-                    # Update temperature from parsed data
-                    temperature = self._property_1_1_handler.temperature
-                    self._temperature = temperature
-                    if old_temperature != temperature:
-                        self._notify_property_change(PROPERTY_TEMPERATURE, temperature)
-                except Exception as ex:
-                    _LOGGER.error("Failed to parse complex status property: %s", ex)
                     return False
             elif FIRMWARE_INSTALL_STATE_PROPERTY.matches(siid, piid):
                 # Handle firmware installation state property (1:2) - firmware update status
@@ -699,6 +675,10 @@ class DreameMowerDevice:
                     if result:
                         # Notify about successful download with metadata
                         self._notify_property_change("device_file_downloaded", result)
+            elif MiscPropertyHandler.matches(siid, piid):
+                # Handle miscellaneous properties (1:1, 2:51) in unified misc handler
+                if not self._misc_handler.handle_property_update(siid, piid, message["value"], self._notify_property_change):
+                    return False  # Parsing failed - treat as unhandled property
             else:
                 return False  # Property not handled
             

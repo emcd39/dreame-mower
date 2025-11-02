@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Fuso horário"
       },
-      "temperature": {
-        "name": "Temperatura do dispositivo"
-      },
       "bms_phase": {
         "name": "Fase BMS"
       },

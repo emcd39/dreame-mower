@@ -89,7 +89,6 @@ class DreameMowerCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "battery_percent": self.device_battery_percent,
             "status": self.device_status,
             "bluetooth_connected": self.device_bluetooth_connected,
-            "temperature": self.device_temperature,
             "charging_status": self.device_charging_status,
             "bms_phase": self.device_bms_phase,
             "current_task_data": self.current_task_data,
@@ -161,11 +160,6 @@ class DreameMowerCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def device_bluetooth_connected(self) -> bool | None:
         """Return Bluetooth connection status."""
         return self.device.bluetooth_connected
-
-    @property
-    def device_temperature(self) -> float | None:
-        """Return temperature from last mowing session."""
-        return self.device.temperature
 
     @property
     def device_charging_status(self) -> str | None:

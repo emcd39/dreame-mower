@@ -103,9 +103,6 @@
       "timezone": {
         "name": "Timezone"
       },
-      "temperature": {
-        "name": "Device temperature"
-      },
       "bms_phase": {
         "name": "BMS phase"
       },

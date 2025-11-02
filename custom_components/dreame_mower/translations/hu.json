@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Időzóna"
       },
-      "temperature": {
-        "name": "Eszközhőmérséklet"
-      },
       "bms_phase": {
         "name": "Bms fázis"
       },

@@ -1,6 +1,6 @@
 """Property handling module for Dreame Mower."""
 
-from .property_1_1 import Property11Handler
+from .property_misc import MiscPropertyHandler
 from .device_code import (
     DeviceCodeType,
     DeviceCodeDefinition, 
@@ -23,7 +23,6 @@ from .device_code import (
 from .scheduling import (
     SchedulingPropertyHandler,
     TaskHandler,
-    SettingsChangeHandler,
     SummaryHandler,
     TaskType,
     TASK_TYPE_FIELD,
@@ -78,7 +77,7 @@ from .mission_completion import (
 )
 
 __all__ = [
-    "Property11Handler",
+    "MiscPropertyHandler",
     "DeviceCodeType",
     "DeviceCodeDefinition", 
     "DeviceCodeRegistry",

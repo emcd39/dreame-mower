@@ -54,7 +54,7 @@ BLUETOOTH_PROPERTY = PropertyIdentifier(siid=1, piid=53, name="bluetooth_connect
 STATUS_PROPERTY = PropertyIdentifier(siid=2, piid=1, name="status")
 DEVICE_CODE_PROPERTY = PropertyIdentifier(siid=2, piid=2, name="device_code")
 SCHEDULING_TASK_PROPERTY = PropertyIdentifier(siid=2, piid=50, name="scheduling_task")
-SCHEDULING_DND_PROPERTY = PropertyIdentifier(siid=2, piid=51, name="scheduling_dnd")
+SETTINGS_CHANGE_PROPERTY = PropertyIdentifier(siid=2, piid=51, name="settings_change")
 SCHEDULING_SUMMARY_PROPERTY = PropertyIdentifier(siid=2, piid=52, name="scheduling_summary")
 MOWER_CONTROL_STATUS_PROPERTY = PropertyIdentifier(siid=2, piid=56, name="mower_control_status")
 POWER_STATE_PROPERTY = PropertyIdentifier(siid=2, piid=57, name="power_state")

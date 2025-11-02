@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Tidszon"
       },
-      "temperature": {
-        "name": "Enhetstemperatur"
-      },
       "bms_phase": {
         "name": "BMS -fas"
       },

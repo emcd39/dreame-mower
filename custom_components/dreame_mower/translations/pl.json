@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Strefa czasowa"
       },
-      "temperature": {
-        "name": "Temperatura urządzenia"
-      },
       "bms_phase": {
         "name": "Faza BMS"
       },

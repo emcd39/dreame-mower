@@ -9,7 +9,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.sensor import SensorEntity, SensorDeviceClass, SensorStateClass
-from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfTemperature, UnitOfArea
+from homeassistant.const import PERCENTAGE, EntityCategory, UnitOfArea
 
 from .const import DATA_COORDINATOR, DOMAIN
 from .coordinator import DreameMowerCoordinator
@@ -32,7 +32,6 @@ async def async_setup_entry(
         DreameMowerStatusSensor(coordinator),
         DreameMowerChargingStatusSensor(coordinator),
         DreameMowerBluetoothSensor(coordinator),
-        DreameMowerTemperatureSensor(coordinator),
         DreameMowerBMSPhaseSensor(coordinator),
         DreameMowerDeviceCodeSensor(coordinator),
         DreameMowerTaskSensor(coordinator),
@@ -113,25 +112,6 @@ class DreameMowerBluetoothSensor(DreameMowerEntity, SensorEntity):
         return {
             "bluetooth_connected": self.coordinator.device_bluetooth_connected,
         }
-
-
-class DreameMowerTemperatureSensor(DreameMowerEntity, SensorEntity):
-    """Temperature sensor for Dreame Mower (live device temperature)."""
-
-    def __init__(self, coordinator: DreameMowerCoordinator) -> None:
-        """Initialize the temperature sensor."""
-        super().__init__(coordinator, "temperature")
-        self._attr_device_class = SensorDeviceClass.TEMPERATURE
-        self._attr_state_class = SensorStateClass.MEASUREMENT
-        self._attr_native_unit_of_measurement = UnitOfTemperature.CELSIUS
-        self._attr_entity_category = EntityCategory.DIAGNOSTIC
-        self._attr_icon = "mdi:thermometer"
-        self._attr_translation_key = "temperature"
-
-    @property
-    def native_value(self) -> float | None:
-        """Return the current device temperature."""
-        return self.coordinator.device_temperature
 
 
 class DreameMowerBMSPhaseSensor(DreameMowerEntity, SensorEntity):

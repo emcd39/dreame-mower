@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Часовой пояс"
       },
-      "temperature": {
-        "name": "Температура устройства"
-      },
       "bms_phase": {
         "name": "Фаза BMS"
       },

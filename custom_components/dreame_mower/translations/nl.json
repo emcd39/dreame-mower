@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Tijdzone"
       },
-      "temperature": {
-        "name": "Apparaattemperatuur"
-      },
       "bms_phase": {
         "name": "BMS -fase"
       },
