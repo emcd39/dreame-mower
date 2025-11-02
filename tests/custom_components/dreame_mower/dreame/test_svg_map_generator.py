@@ -1,6 +1,7 @@
 """Tests for svg_map_generator module."""
 
 import json
+import re
 from pathlib import Path
 from unittest.mock import Mock
 
@@ -22,6 +23,21 @@ from custom_components.dreame_mower.dreame.svg_map_generator import (
 # Path to test data
 TEST_DATA_DIR = Path(__file__).parent / "test_data"
 GOLDEN_JSON_FILE = TEST_DATA_DIR / "test_svg_map_generator.json"
+
+
+def normalize_svg_for_comparison(svg_bytes: bytes) -> bytes:
+    """Normalize SVG content for comparison by removing dynamic timestamps.
+    
+    Args:
+        svg_bytes: The SVG content as bytes
+        
+    Returns:
+        Normalized SVG content with timestamps removed
+    """
+    svg_text = svg_bytes.decode('utf-8')
+    # Replace timestamp with a fixed placeholder
+    svg_text = re.sub(r'Updated: \d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}', 'Updated: TIMESTAMP', svg_text)
+    return svg_text.encode('utf-8')
 
 
 @pytest.fixture
@@ -303,35 +319,24 @@ class TestMapBoundaryMultiZone:
         result = generate_svg_map_image(map_data, None, mock_coordinator, rotation=0)
         
         # Save output for visual inspection
-        output_svg_file = TEST_DATA_DIR / "map_boundary_multi_zone_output.svg"
+        output_svg_file = TEST_DATA_DIR / "map_boundary_multi_zone_actual.svg"
         with open(output_svg_file, 'wb') as f:
             f.write(result)
         
-        # Verify the file was written successfully
-        assert output_svg_file.exists()
-        assert output_svg_file.stat().st_size > 0
+        # Load golden file for comparison
+        golden_svg_file = TEST_DATA_DIR / "map_boundary_multi_zone_golden.svg"
+        with open(golden_svg_file, 'rb') as f:
+            expected_result = f.read()
         
-        # Basic validation that it's valid SVG
-        svg_output = result.decode('utf-8')
-        assert svg_output.startswith('<?xml')
-        assert '<svg' in svg_output
-        assert '</svg>' in svg_output
+        # Normalize both for comparison (removes dynamic timestamps)
+        normalized_result = normalize_svg_for_comparison(result)
+        normalized_expected = normalize_svg_for_comparison(expected_result)
         
-        # Verify it contains expected map elements
-        assert 'Dreame Mower Map' in svg_output
-        
-        # Verify the critical fix: map boundaries should have multiple move operations
-        # indicating proper zone separation rather than continuous lines between zones
-        import re
-        map_boundary_paths = re.findall(r'<path[^>]*d="([^"]*)"[^>]*stroke="#006400"', svg_output)
-        assert len(map_boundary_paths) > 0, "Should contain map boundary path"
-        
-        # Count move operations (M commands) in the map boundary path
-        move_commands = re.findall(r' M ', map_boundary_paths[0])
-        assert len(move_commands) >= 2, (
-            f"Map boundary should have multiple move operations for zone separation, "
-            f"but found only {len(move_commands)} move commands. "
-            f"This indicates zones may be incorrectly connected with continuous lines."
+        # Compare actual output with golden file
+        assert normalized_result == normalized_expected, (
+            f"Generated SVG does not match golden file. "
+            f"Actual output saved to {output_svg_file}. "
+            f"If the changes are intentional, update the golden file."
         )
 
 
@@ -342,8 +347,7 @@ class TestMapRotation:
         """Test generating a 90-degree rotated map.
         
         This test verifies that the rotation feature works correctly by generating
-        a rotated SVG and checking for the proper rotation transform attributes.
-        The output is saved for visual inspection.
+        a rotated SVG and comparing against the golden reference file.
         """
         # Generate SVG with 90-degree rotation
         result = generate_svg_map_image(golden_map_data, None, mock_coordinator, rotation=90)
@@ -353,30 +357,20 @@ class TestMapRotation:
         with open(rotated_svg_file, 'wb') as f:
             f.write(result)
         
-        # Verify the file was written
-        assert rotated_svg_file.exists()
-        assert rotated_svg_file.stat().st_size > 0
+        # Load golden file for comparison
+        golden_svg_file = TEST_DATA_DIR / "test_svg_map_generator_rotated_90_golden.svg"
+        with open(golden_svg_file, 'rb') as f:
+            expected_result = f.read()
         
-        # Basic validation that it's valid SVG
-        svg_output = result.decode('utf-8')
-        assert svg_output.startswith('<?xml')
-        assert '<svg' in svg_output
-        assert '</svg>' in svg_output
+        # Normalize both for comparison (removes dynamic timestamps)
+        normalized_result = normalize_svg_for_comparison(result)
+        normalized_expected = normalize_svg_for_comparison(expected_result)
         
-        # Verify rotation transform is present (600, 600 because MAP_IMAGE_WIDTH/HEIGHT = 1200)
-        assert 'transform="rotate(90, 600, 600)"' in svg_output, (
-            "SVG should contain rotation transform for 90 degrees centered at (600, 600)"
-        )
-        
-        # Verify the rotation group is properly opened and closed
-        assert '<g transform="rotate(90, 600, 600)">' in svg_output
-        assert svg_output.count('</g>') >= 1
-        
-        # Verify title is NOT inside the rotation group (should appear after </g>)
-        rotation_close_idx = svg_output.find('</g>')
-        title_idx = svg_output.find('Dreame Mower Map (Current)')
-        assert title_idx > rotation_close_idx, (
-            "Title should appear after rotation group closes (not be rotated)"
+        # Compare actual output with golden file
+        assert normalized_result == normalized_expected, (
+            f"Generated SVG does not match golden file. "
+            f"Actual output saved to {rotated_svg_file}. "
+            f"If the changes are intentional, update the golden file."
         )
 
     def test_generate_rotated_svg_180_degrees(self, golden_map_data, mock_coordinator):
@@ -398,11 +392,28 @@ class TestMapRotation:
     def test_generate_unrotated_svg(self, golden_map_data, mock_coordinator):
         """Test generating a map with no rotation (0 degrees).
         
-        When rotation is 0, no rotation transform should be present.
+        This test verifies that maps with no rotation are generated correctly
+        by comparing against the golden reference file.
         """
         result = generate_svg_map_image(golden_map_data, None, mock_coordinator, rotation=0)
         
-        svg_output = result.decode('utf-8')
-        # Should NOT contain any rotation transform
-        assert 'transform="rotate(' not in svg_output
-        assert '<g transform="rotate' not in svg_output
+        # Save to output file for visual inspection
+        output_svg_file = TEST_DATA_DIR / "test_svg_map_generator_rotated_0_actual.svg"
+        with open(output_svg_file, 'wb') as f:
+            f.write(result)
+        
+        # Load golden file for comparison
+        golden_svg_file = TEST_DATA_DIR / "test_svg_map_generator_rotated_0_golden.svg"
+        with open(golden_svg_file, 'rb') as f:
+            expected_result = f.read()
+        
+        # Normalize both for comparison (removes dynamic timestamps)
+        normalized_result = normalize_svg_for_comparison(result)
+        normalized_expected = normalize_svg_for_comparison(expected_result)
+        
+        # Compare actual output with golden file
+        assert normalized_result == normalized_expected, (
+            f"Generated SVG does not match golden file. "
+            f"Actual output saved to {output_svg_file}. "
+            f"If the changes are intentional, update the golden file."
+        )
