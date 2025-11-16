@@ -45,7 +45,7 @@ from typing import Dict, Any, List, Optional
 import asyncio
 
 try:
-    from googletrans import Translator  # type: ignore[import-untyped]
+    from googletrans import Translator  # type: ignore[import-not-found]
     HAS_GOOGLETRANS = True
 except ImportError:
     HAS_GOOGLETRANS = False
