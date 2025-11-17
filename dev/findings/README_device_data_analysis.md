@@ -12,23 +12,24 @@ Successfully implemented a comprehensive device data analysis tool using the RES
 #### ✅ SETTINGS Data (4 items)
 - **SETTINGS.0**: Complete mowing profiles with 2 modes, detailed configuration analysis
 - **SETTINGS.1 & SETTINGS.2**: Raw JSON data requiring enhanced parsing (currently shows parsing issues)  
-- **SETTINGS.info**: Bit flag analysis revealing 6 enabled features (748 = Rain Sensor, Theft Protection, Auto Return, Blade Height Auto-Adjust, Path Optimization, Night Mode)
+- **SETTINGS.info**: Simple value (1444) - purpose unknown, not a feature flag bitmap
 
 **Key Insights:**
 - Profile configurations with mowing height (3-7cm), direction (0-180°), and patterns
 - Advanced obstacle avoidance with AI detection (Objects + Animals + People)
 - Edge mowing configurations with safety modes
-- Comprehensive feature flags revealing hidden capabilities
+- The .info value does not represent feature flags (confirmed via testing)
 
 #### ✅ SCHEDULE Data (2 items) 
 - **SCHEDULE.0**: Sunday schedule with 3 time periods, base64 decoded
 - **SCHEDULE.1**: Monday schedule with 2 time periods, base64 decoded
-- **SCHEDULE.info**: Version information (88)
+- **SCHEDULE.info**: Simple value (89) - purpose unknown, not a version number
 
 **Key Insights:**
 - Base64 encoded time periods successfully decoded to hex bytes
 - Time pattern analysis revealing 7-byte period structures
 - Day-based scheduling with enable/disable states
+- The .info value purpose is unclear (confirmed not changing with schedule modifications)
 
 #### ✅ MAP Data (24 items)
 **Complete coordinate and boundary analysis implemented:**
@@ -45,7 +46,7 @@ Successfully implemented a comprehensive device data analysis tool using the RES
 
 #### ✅ FBD_NTYPE Data (2 items)
 **Forbidden Area Type Analysis:**
-- **FBD_NTYPE.info**: Simple value (77)
+- **FBD_NTYPE.info**: Simple value (77) - purpose unknown
 - **FBD_NTYPE.0**: JSON array with area type configurations
   - Entry 0: {'101': 12, '102': 12, '103': 12}
   - Entry 1: {'101': 12, '102': 12, '103': 12, '104': 12, '105': 12}
@@ -54,15 +55,16 @@ Successfully implemented a comprehensive device data analysis tool using the RES
 - Numerical codes (101-105) likely represent different forbidden area types
 - Value 12 may represent area parameters or settings
 - Multiple entries suggest different area configurations
+- The .info value purpose is unclear
 
 #### ✅ OTA_INFO Data (2 items)
 **Over-The-Air Update Information:**
-- **OTA_INFO.info**: Version indicator (5)
+- **OTA_INFO.info**: Simple value (5) - purpose unknown
 - **OTA_INFO.0**: JSON array with update status [1, 0]
 
 **Key Insights:**
-- Version tracking for OTA updates
 - Binary status indicators (1=available/enabled, 0=not available/disabled)
+- The .info value purpose is unclear
 
 ### Technical Implementation
 

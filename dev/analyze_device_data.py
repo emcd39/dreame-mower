@@ -247,7 +247,7 @@ class DeviceDataAnalyzer:
                     return {
                         'type': 'info',
                         'value': settings_value,
-                        'decoded_flags': self.decode_settings_flags(settings_value)
+                        'note': 'Purpose unknown, not a feature flag bitmap'
                     }
                 
                 # Special handling for SETTINGS.1 which starts with "Height" (obstacleAvoidanceHeight)
@@ -337,69 +337,6 @@ class DeviceDataAnalyzer:
             logger.error(f"Error parsing settings: {e}")
             return None
 
-    def decode_settings_flags(self, settings_value):
-        """Decode settings value as bit flags for mower features."""
-        if not isinstance(settings_value, int):
-            return {"error": f"Invalid settings value: {settings_value}"}
-        
-        # Define the bit flag meanings based on analysis
-        flag_definitions = {
-            0: "Unknown feature 0",
-            1: "Unknown feature 1", 
-            2: "Rain sensor enabled",
-            3: "Theft protection enabled",
-            4: "Unknown feature 4",
-            5: "Auto return enabled",
-            6: "Blade height auto-adjust",
-            7: "Path optimization",
-            8: "Unknown feature 8",
-            9: "Night mode enabled",
-            10: "Unknown feature 10",
-            11: "Unknown feature 11",
-            12: "Unknown feature 12",
-            13: "Unknown feature 13",
-            14: "Unknown feature 14",
-            15: "Unknown feature 15"
-        }
-        
-        # Extract active flags
-        active_flags = []
-        inactive_flags = []
-        
-        for bit in range(16):
-            flag_name = flag_definitions.get(bit, f"Unknown bit {bit}")
-            if settings_value & (1 << bit):
-                active_flags.append(f"Bit {bit}: {flag_name}")
-            else:
-                inactive_flags.append(f"Bit {bit}: {flag_name}")
-        
-        # Get enabled feature summary
-        known_features = {
-            2: "Rain Sensor",
-            3: "Theft Protection", 
-            5: "Auto Return",
-            6: "Blade Height Auto-Adjust",
-            7: "Path Optimization",
-            9: "Night Mode"
-        }
-        
-        enabled_features = []
-        for bit, feature_name in known_features.items():
-            if settings_value & (1 << bit):
-                enabled_features.append(feature_name)
-        
-        return {
-            "binary_representation": f"0b{settings_value:016b}",
-            "hexadecimal": f"0x{settings_value:04X}",
-            "decimal": settings_value,
-            "active_flags": active_flags,
-            "inactive_flags": inactive_flags,
-            "active_bits": [i for i in range(16) if settings_value & (1 << i)],
-            "enabled_features": enabled_features,
-            "total_enabled_features": len(enabled_features),
-            "total_active_bits": len([i for i in range(16) if settings_value & (1 << i)])
-        }
-
     def parse_schedule_data(self, schedule_raw: Any) -> Dict[str, Any]:
         """Parse and extract schedule information."""
         try:
@@ -407,7 +344,8 @@ class DeviceDataAnalyzer:
             if isinstance(schedule_raw, (str, int)) and not (isinstance(schedule_raw, str) and schedule_raw.startswith('{')):
                 return {
                     'type': 'info',
-                    'value': schedule_raw
+                    'value': schedule_raw,
+                    'note': 'Purpose unknown, not a version number'
                 }
             
             # Try to parse as JSON
@@ -427,39 +365,15 @@ class DeviceDataAnalyzer:
 
     def display_advanced_features(self, settings_data):
         """Display advanced mowing features in an organized way."""
+        # Handle info-type settings
+        if settings_data.get('type') == 'info':
+            print(f"\n  • Value: {settings_data['value']}")
+            print(f"  • Note: {settings_data.get('note', 'Unknown')}")
+            return
+        
         print("\n" + "="*80)
         print("🔧 ADVANCED MOWING FEATURES DISCOVERED")
         print("="*80)
-        
-        # Handle info-type settings
-        if settings_data.get('type') == 'info':
-            settings_value = settings_data['value']
-            print(f"Settings Info: {settings_value}")
-            
-            # Display decoded flags if available
-            if 'decoded_flags' in settings_data:
-                flags_info = settings_data['decoded_flags']
-                print(f"\n🏷️  FLAG ANALYSIS:")
-                print(f"   Binary: {flags_info['binary_representation']}")
-                print(f"   Hex: {flags_info['hexadecimal']}")
-                print(f"   Active bits: {flags_info['active_bits']}")
-                
-                print(f"\n✅ ENABLED FEATURES ({flags_info['total_enabled_features']} features):")
-                for feature in flags_info['enabled_features']:
-                    print(f"   • {feature}")
-                
-                print(f"\n🔧 DETAILED BIT FLAGS:")
-                print(f"   Active flags ({flags_info['total_active_bits']} total):")
-                for flag in flags_info['active_flags']:
-                    print(f"   ✓ {flag}")
-                
-                print(f"   Inactive flags:")
-                for flag in flags_info['inactive_flags'][:5]:  # Show first 5 to avoid clutter
-                    print(f"   ✗ {flag}")
-                if len(flags_info['inactive_flags']) > 5:
-                    print(f"   ... and {len(flags_info['inactive_flags']) - 5} more inactive flags")
-            
-            return
         
         for mode_key, mode_info in settings_data.items():
             print(f"\n📋 {mode_key.upper()} (Mode {mode_info['mode']}):")
@@ -718,10 +632,11 @@ class DeviceDataAnalyzer:
                     'entries': len(fbd_data) if isinstance(fbd_data, list) else 1
                 }
             else:
-                # Simple value
+                # Simple value (like FBD_NTYPE.info)
                 return {
                     'type': 'simple_value',
-                    'value': fbd_raw
+                    'value': fbd_raw,
+                    'note': 'Purpose unknown'
                 }
         except Exception as e:
             logger.error(f"Error parsing FBD_NTYPE data: {e}")
@@ -739,10 +654,11 @@ class DeviceDataAnalyzer:
                     'entries': len(ota_data) if isinstance(ota_data, list) else 1
                 }
             else:
-                # Simple value (like version info)
+                # Simple value (like OTA_INFO.info)
                 return {
                     'type': 'info_value',
-                    'value': ota_raw
+                    'value': ota_raw,
+                    'note': 'Purpose unknown'
                 }
         except Exception as e:
             logger.error(f"Error parsing OTA_INFO data: {e}")
@@ -796,8 +712,8 @@ class DeviceDataAnalyzer:
                 for idx, entry in enumerate(fbd_data['data']):
                     print(f"    Entry {idx}: {entry}")
         else:
-            print(f"  • Type: Simple value")
             print(f"  • Value: {fbd_data['value']}")
+            print(f"  • Note: {fbd_data.get('note', 'Unknown')}")
 
     def display_ota_info(self, ota_data, ota_key):
         """Display OTA_INFO (Over-The-Air update info) information."""
@@ -812,66 +728,65 @@ class DeviceDataAnalyzer:
             
             # Try to interpret as version/update info
             if isinstance(ota_data['data'], list) and len(ota_data['data']) >= 2:
-                print(f"    Version info: {ota_data['data'][0]}, {ota_data['data'][1]}")
+                print(f"    Status indicators: {ota_data['data']}")
+                print(f"    Note: Binary status (1=available/enabled, 0=not available/disabled)")
         else:
-            print(f"  • Type: Version/Info value")
             print(f"  • Value: {ota_data['value']}")
+            print(f"  • Note: {ota_data.get('note', 'Unknown')}")
 
     def display_schedule_info(self, schedule_data):
         """Display schedule information."""
-        print("\n" + "="*80)
-        print("📅 SCHEDULE CONFIGURATION")
-        print("="*80)
-        
         if schedule_data['type'] == 'info':
-            print(f"Schedule Info: {schedule_data['value']}")
-        else:
-            print(f"Version: {schedule_data['version']}")
-            print(f"Number of schedules: {len(schedule_data['schedules'])}")
+            print(f"  • Value: {schedule_data['value']}")
+            print(f"  • Note: {schedule_data.get('note', 'Unknown')}")
+            return
+        
+        print(f"\nInternal value 'v': {schedule_data['version']} (purpose unknown)")
+        print(f"Number of schedules: {len(schedule_data['schedules'])}")
+        
+        for idx, schedule in enumerate(schedule_data['schedules']):
+            day_names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+            day_name = day_names[schedule[0]] if 0 <= schedule[0] < 7 else f"Day {schedule[0]}"
             
-            for idx, schedule in enumerate(schedule_data['schedules']):
-                day_names = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-                day_name = day_names[schedule[0]] if 0 <= schedule[0] < 7 else f"Day {schedule[0]}"
-                
-                print(f"\n📆 Schedule {idx + 1} ({day_name}):")
-                print(f"  • Day: {schedule[0]} ({day_name})")
-                print(f"  • Enabled: {'✅ Yes' if schedule[1] else '❌ No'}")
-                print(f"  • Name: '{schedule[2]}'")
-                
-                # Decode the schedule data
-                encoded_data = schedule[3]
-                print(f"  • Encoded Data: {encoded_data}")
-                
-                if encoded_data:
-                    decoded = self.decode_schedule_data(encoded_data)
-                    if isinstance(decoded, dict):
-                        print(f"  📋 Decoded Schedule:")
-                        print(f"    - Format: {decoded.get('format', 'Unknown')}")
-                        print(f"    - Raw bytes ({decoded['length']}): {decoded['raw_bytes']}")
-                        
-                        if decoded.get('time_periods'):
-                            print(f"    - 🕐 Time Periods:")
-                            for period in decoded['time_periods']:
-                                if 'error' in period:
-                                    print(f"      Period {period.get('period', '?')}: ❌ {period['error']}")
-                                else:
-                                    print(f"      � Period {period['period']}:")
-                                    print(f"        • ID: {period['identifier']}")
-                                    print(f"        • Time bytes: {period['time_bytes']}")
-                                    print(f"        • Possible interpretations:")
-                                    for interp in period['interpretations']:
-                                        print(f"          - {interp}")
-                                    print(f"        • Raw: {period['raw_hex']}")
-                        
-                        elif decoded.get('raw_interpretation'):
-                            print(f"    - 🕐 Time Analysis:")
-                            for interp in decoded['raw_interpretation']:
-                                print(f"      • {interp}")
-                        
-                        if decoded.get('parse_error'):
-                            print(f"    - ⚠️ Parse error: {decoded['parse_error']}")
-                    else:
-                        print(f"  📋 Decode result: {decoded}")
+            print(f"\n📆 Schedule {idx + 1} ({day_name}):")
+            print(f"  • Day: {schedule[0]} ({day_name})")
+            print(f"  • Enabled: {'✅ Yes' if schedule[1] else '❌ No'}")
+            print(f"  • Name: '{schedule[2]}'")
+            
+            # Decode the schedule data
+            encoded_data = schedule[3]
+            print(f"  • Encoded Data: {encoded_data}")
+            
+            if encoded_data:
+                decoded = self.decode_schedule_data(encoded_data)
+                if isinstance(decoded, dict):
+                    print(f"  📋 Decoded Schedule:")
+                    print(f"    - Format: {decoded.get('format', 'Unknown')}")
+                    print(f"    - Raw bytes ({decoded['length']}): {decoded['raw_bytes']}")
+                    
+                    if decoded.get('time_periods'):
+                        print(f"    - 🕐 Time Periods:")
+                        for period in decoded['time_periods']:
+                            if 'error' in period:
+                                print(f"      Period {period.get('period', '?')}: ❌ {period['error']}")
+                            else:
+                                print(f"      ⏰ Period {period['period']}:")
+                                print(f"        • ID: {period['identifier']}")
+                                print(f"        • Time bytes: {period['time_bytes']}")
+                                print(f"        • Possible interpretations:")
+                                for interp in period['interpretations']:
+                                    print(f"          - {interp}")
+                                print(f"        • Raw: {period['raw_hex']}")
+                    
+                    elif decoded.get('raw_interpretation'):
+                        print(f"    - 🕐 Time Analysis:")
+                        for interp in decoded['raw_interpretation']:
+                            print(f"      • {interp}")
+                    
+                    if decoded.get('parse_error'):
+                        print(f"    - ⚠️ Parse error: {decoded['parse_error']}")
+                else:
+                    print(f"  📋 Decode result: {decoded}")
 
     def analyze_comprehensive_data(self):
         """Retrieve and analyze comprehensive device data with all data types."""
@@ -967,12 +882,14 @@ class DeviceDataAnalyzer:
                 
                 for key, value in schedule_data.items():
                     parsed = self.parse_schedule_data(value)
+                    if parsed['type'] == 'info':
+                        print(f"\n🔍 Analyzing {key}...")
                     self.display_schedule_info(parsed)
             
             # Analyze MAP data
             if map_data:
                 print("\n" + "="*50)
-                print("�️  MAP ANALYSIS")
+                print("🗺️  MAP ANALYSIS")
                 print("="*50)
                 print(f"Found {len(map_data)} MAP entries - analyzing coordinate and boundary data...")
                 
@@ -983,7 +900,7 @@ class DeviceDataAnalyzer:
             # Analyze FBD_NTYPE data
             if fbd_ntype_data:
                 print("\n" + "="*50)
-                print("� FORBIDDEN AREA TYPE ANALYSIS")
+                print("🚫 FORBIDDEN AREA TYPE ANALYSIS")
                 print("="*50)
                 
                 for key, value in fbd_ntype_data.items():
