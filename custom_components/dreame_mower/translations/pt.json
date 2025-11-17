@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Fuso horário"
       },
-      "bms_phase": {
-        "name": "Fase BMS"
-      },
       "device_code": {
         "name": "Código do dispositivo"
       },

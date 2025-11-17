@@ -57,7 +57,7 @@ from .const import (
     TASK_STATUS_PROPERTY,
     FIRMWARE_INSTALL_STATE_MAPPING,
     SERVICE5_PROPERTY_105,
-    BMS_PHASE_PROPERTY,
+    SERVICE5_PROPERTY_106,
     SERVICE5_ENERGY_INDEX_PROPERTY,
     SERVICE5_PROPERTY_108,
     DEVICE_FILE_PATH_PROPERTY,
@@ -234,11 +234,6 @@ class DreameMowerDevice:
     def charging_status(self) -> str | None:
         """Return charging status mapped text."""
         return self._charging_status
-
-    @property
-    def bms_phase(self) -> int | None:
-        """Return current BMS micro-phase code (5:106)."""
-        return self._service5_handler.bms_phase_code
     
     @property
     def service5_property_105(self) -> int | None:
@@ -583,7 +578,7 @@ class DreameMowerDevice:
                     self._notify_property_change(CHARGING_STATUS_PROPERTY.name, status_text)
             elif (TASK_STATUS_PROPERTY.matches(siid, piid) or
                   SERVICE5_PROPERTY_105.matches(siid, piid) or 
-                  BMS_PHASE_PROPERTY.matches(siid, piid) or 
+                  SERVICE5_PROPERTY_106.matches(siid, piid) or 
                   SERVICE5_ENERGY_INDEX_PROPERTY.matches(siid, piid) or
                   SERVICE5_PROPERTY_108.matches(siid, piid)):
                 # Handle all Service 5 properties (5:104, 5:105, 5:106, 5:107, 5:108) in unified handler

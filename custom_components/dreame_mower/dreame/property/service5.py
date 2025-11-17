@@ -15,14 +15,14 @@ from __future__ import annotations
 import logging
 from typing import Dict, Any
 from enum import Enum
-from ..const import TASK_STATUS_PROPERTY, SERVICE5_PROPERTY_105, BMS_PHASE_PROPERTY, SERVICE5_ENERGY_INDEX_PROPERTY, SERVICE5_PROPERTY_108
+from ..const import TASK_STATUS_PROPERTY, SERVICE5_PROPERTY_105, SERVICE5_PROPERTY_106, SERVICE5_ENERGY_INDEX_PROPERTY, SERVICE5_PROPERTY_108
 
 _LOGGER = logging.getLogger(__name__)
 
 # Property name constants for notifications
 TASK_STATUS_PROPERTY_NAME = TASK_STATUS_PROPERTY.name
 SERVICE5_PROPERTY_105_PROPERTY_NAME = SERVICE5_PROPERTY_105.name
-BMS_PHASE_PROPERTY_NAME = BMS_PHASE_PROPERTY.name
+SERVICE5_PROPERTY_106_PROPERTY_NAME = SERVICE5_PROPERTY_106.name
 SERVICE5_ENERGY_INDEX_PROPERTY_NAME = SERVICE5_ENERGY_INDEX_PROPERTY.name
 SERVICE5_PROPERTY_108_PROPERTY_NAME = SERVICE5_PROPERTY_108.name
 
@@ -30,7 +30,7 @@ SERVICE5_PROPERTY_108_PROPERTY_NAME = SERVICE5_PROPERTY_108.name
 TASK_STATUS_CODE_FIELD = "status_code"
 TASK_STATUS_DESCRIPTION_FIELD = "status_description"
 PROPERTY_105_VALUE_FIELD = "value_105"
-BMS_PHASE_CODE_FIELD = "phase_code"
+PROPERTY_106_VALUE_FIELD = "value_106"
 ENERGY_INDEX_VALUE_FIELD = "energy_index"
 PROPERTY_108_VALUE_FIELD = "value_108"
 
@@ -52,8 +52,8 @@ class Service5PropertyHandler:
         # Property 5:105 state
         self._property_105_value: int | None = None
         
-        # Property 5:106 BMS phase state
-        self._bms_phase_code: int | None = None
+        # Property 5:106 state (formerly BMS phase - purpose unclear)
+        self._property_106_value: int | None = None
         
         # Property 5:107 energy index state
         self._energy_index: int | None = None
@@ -84,9 +84,9 @@ class Service5PropertyHandler:
             elif SERVICE5_PROPERTY_105.matches(siid, piid):
                 return self._handle_property_105(value, notify_callback)
             
-            # Handle BMS phase property (5:106)
-            elif BMS_PHASE_PROPERTY.matches(siid, piid):
-                return self._handle_bms_phase_property(value, notify_callback)
+            # Handle property 5:106
+            elif SERVICE5_PROPERTY_106.matches(siid, piid):
+                return self._handle_property_106(value, notify_callback)
             
             # Handle energy index property (5:107)
             elif SERVICE5_ENERGY_INDEX_PROPERTY.matches(siid, piid):
@@ -166,30 +166,30 @@ class Service5PropertyHandler:
             _LOGGER.error("Failed to parse Service 5 property 105 value: %s - %s", value, ex)
             return False
     
-    def _handle_bms_phase_property(self, value: Any, notify_callback) -> bool:
-        """Handle BMS charging phase property (5:106)."""
+    def _handle_property_106(self, value: Any, notify_callback) -> bool:
+        """Handle Service 5 property 106 (formerly thought to be BMS charging phase)."""
         try:
             # Convert value to integer
-            new_phase_code = int(value)
-            old_phase_code = self._bms_phase_code
+            new_value = int(value)
+            old_value = self._property_106_value
             
             # Update state
-            self._bms_phase_code = new_phase_code
+            self._property_106_value = new_value
             
             # Send notification
-            bms_phase_data = {
-                BMS_PHASE_CODE_FIELD: new_phase_code,
+            property_106_data = {
+                PROPERTY_106_VALUE_FIELD: new_value,
             }
-            notify_callback(BMS_PHASE_PROPERTY_NAME, bms_phase_data)
+            notify_callback(SERVICE5_PROPERTY_106_PROPERTY_NAME, property_106_data)
             
             # Notify individual state change for backward compatibility
-            if old_phase_code != new_phase_code:
-                notify_callback("bms_phase_code", new_phase_code)
+            if old_value != new_value:
+                notify_callback("service5_property_106_value", new_value)
             
             return True
             
         except (ValueError, TypeError) as ex:
-            _LOGGER.error("Failed to parse BMS phase value: %s - %s", value, ex)
+            _LOGGER.error("Failed to parse Service 5 property 106 value: %s - %s", value, ex)
             return False
     
     def _handle_energy_index_property(self, value: Any, notify_callback) -> bool:
@@ -267,9 +267,9 @@ class Service5PropertyHandler:
         return self._property_105_value
     
     @property
-    def bms_phase_code(self) -> int | None:
-        """Return BMS charging phase code."""
-        return self._bms_phase_code
+    def property_106_value(self) -> int | None:
+        """Return Service 5 property 106 value."""
+        return self._property_106_value
     
     @property
     def energy_index(self) -> int | None:
@@ -285,8 +285,3 @@ class Service5PropertyHandler:
     def has_energy_tracking(self) -> bool:
         """Return True if energy tracking is active (energy index is available)."""
         return self._energy_index is not None
-    
-    @property
-    def is_charging_phase_active(self) -> bool:
-        """Return True if BMS charging phase is active (phase code is available)."""
-        return self._bms_phase_code is not None

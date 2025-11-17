@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Időzóna"
       },
-      "bms_phase": {
-        "name": "Bms fázis"
-      },
       "device_code": {
         "name": "Eszközkód"
       },

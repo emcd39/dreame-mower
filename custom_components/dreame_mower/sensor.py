@@ -32,7 +32,6 @@ async def async_setup_entry(
         DreameMowerStatusSensor(coordinator),
         DreameMowerChargingStatusSensor(coordinator),
         DreameMowerBluetoothSensor(coordinator),
-        DreameMowerBMSPhaseSensor(coordinator),
         DreameMowerDeviceCodeSensor(coordinator),
         DreameMowerTaskSensor(coordinator),
         DreameMowerProgressSensor(coordinator),
@@ -112,20 +111,6 @@ class DreameMowerBluetoothSensor(DreameMowerEntity, SensorEntity):
         return {
             "bluetooth_connected": self.coordinator.device_bluetooth_connected,
         }
-
-
-class DreameMowerBMSPhaseSensor(DreameMowerEntity, SensorEntity):
-    """BMS micro-phase (5:106) diagnostic sensor."""
-
-    def __init__(self, coordinator: DreameMowerCoordinator) -> None:
-        super().__init__(coordinator, "bms_phase")
-        self._attr_icon = "mdi:current-dc"
-        self._attr_entity_category = EntityCategory.DIAGNOSTIC
-        self._attr_translation_key = "bms_phase"
-
-    @property
-    def native_value(self) -> int | None:
-        return self.coordinator.device_bms_phase
 
 
 class DreameMowerDeviceCodeSensor(DreameMowerEntity, SensorEntity):

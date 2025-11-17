@@ -45,10 +45,8 @@ from .mower_control import (
 from .service5 import (
     Service5PropertyHandler,
     SERVICE5_PROPERTY_105_PROPERTY_NAME,
-    BMS_PHASE_PROPERTY_NAME,
     SERVICE5_ENERGY_INDEX_PROPERTY_NAME,
     PROPERTY_105_VALUE_FIELD,
-    BMS_PHASE_CODE_FIELD,
     ENERGY_INDEX_VALUE_FIELD,
 )
 from .pose_coverage import (
@@ -115,10 +113,8 @@ __all__ = [
     "CONTROL_VALUE_FIELD",
     "Service5PropertyHandler",
     "SERVICE5_PROPERTY_105_PROPERTY_NAME",
-    "BMS_PHASE_PROPERTY_NAME",
     "SERVICE5_ENERGY_INDEX_PROPERTY_NAME",
     "PROPERTY_105_VALUE_FIELD",
-    "BMS_PHASE_CODE_FIELD",
     "ENERGY_INDEX_VALUE_FIELD",
     "PoseCoveragePropertyHandler",
     "POSE_COVERAGE_PROGRESS_PROPERTY_NAME",

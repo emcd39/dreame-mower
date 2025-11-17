@@ -102,9 +102,6 @@
       "timezone": {
         "name": "Tidszon"
       },
-      "bms_phase": {
-        "name": "BMS -fas"
-      },
       "device_code": {
         "name": "Enhetskod"
       },

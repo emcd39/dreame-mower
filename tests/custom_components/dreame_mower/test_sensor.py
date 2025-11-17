@@ -13,7 +13,6 @@ from custom_components.dreame_mower.sensor import (
     DreameMowerBatterySensor,
     DreameMowerStatusSensor,
     DreameMowerChargingStatusSensor,
-    DreameMowerBMSPhaseSensor,
 )
 from custom_components.dreame_mower.config_flow import (
     CONF_ACCOUNT_TYPE,
@@ -33,7 +32,6 @@ def mock_coordinator():
     coordinator.device_battery_percent = 85  # Default battery level
     coordinator.device_status = "Charging complete"  # Default status
     coordinator.device_charging_status = "Charging"  # Default charging status
-    coordinator.device_bms_phase = 5  # Default BMS phase
     return coordinator
 
 
@@ -141,41 +139,6 @@ async def test_charging_status_sensor_native_value_unavailable(mock_coordinator,
     mock_coordinator.device_charging_status = None
     
     sensor = DreameMowerChargingStatusSensor(mock_coordinator)
-    
-    assert sensor.available is False
-    assert sensor.native_value is None
-
-
-async def test_bms_phase_sensor_initialization(mock_coordinator, device_id):
-    """Test BMS phase sensor initialization."""
-    sensor = DreameMowerBMSPhaseSensor(mock_coordinator)
-    
-    assert sensor.coordinator == mock_coordinator
-    assert sensor._entity_description_key == "bms_phase"
-    assert sensor.unique_id == "aa:bb:cc:dd:ee:ff_bms_phase"
-
-
-async def test_bms_phase_sensor_native_value_available(mock_coordinator, device_id):
-    """Test BMS phase sensor returns value when available."""
-    mock_coordinator.device_connected = True
-    mock_coordinator.last_update_success = True
-    
-    mock_coordinator.device_bms_phase = 7
-    
-    sensor = DreameMowerBMSPhaseSensor(mock_coordinator)
-    
-    assert sensor.available is True
-    assert sensor.native_value == 7
-
-
-async def test_bms_phase_sensor_native_value_unavailable(mock_coordinator, device_id):
-    """Test BMS phase sensor returns None when unavailable."""
-    mock_coordinator.device_connected = False
-    mock_coordinator.last_update_success = False
-    
-    mock_coordinator.device_bms_phase = None
-    
-    sensor = DreameMowerBMSPhaseSensor(mock_coordinator)
     
     assert sensor.available is False
     assert sensor.native_value is None

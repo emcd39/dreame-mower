@@ -90,7 +90,6 @@ class DreameMowerCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "status": self.device_status,
             "bluetooth_connected": self.device_bluetooth_connected,
             "charging_status": self.device_charging_status,
-            "bms_phase": self.device_bms_phase,
             "current_task_data": self.current_task_data,
             "mowing_progress_percent": self.mowing_progress_percent,
             "current_area_sqm": self.current_area_sqm,
@@ -165,11 +164,6 @@ class DreameMowerCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     def device_charging_status(self) -> str | None:
         """Return charging status (mapped text)."""
         return self.device.charging_status
-
-    @property
-    def device_bms_phase(self) -> int | None:
-        """Return BMS micro-phase (5:106)."""
-        return self.device.bms_phase
 
     @property
     def current_task_data(self) -> dict | None:

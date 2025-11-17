@@ -69,7 +69,7 @@ CHARGING_STATUS_PROPERTY = PropertyIdentifier(siid=3, piid=2, name="charging_sta
 
 TASK_STATUS_PROPERTY = PropertyIdentifier(siid=5, piid=104, name="task_status")
 SERVICE5_PROPERTY_105 = PropertyIdentifier(siid=5, piid=105, name="service5_property_105")
-BMS_PHASE_PROPERTY = PropertyIdentifier(siid=5, piid=106, name="bms_phase")
+SERVICE5_PROPERTY_106 = PropertyIdentifier(siid=5, piid=106, name="service5_property_106")
 SERVICE5_ENERGY_INDEX_PROPERTY = PropertyIdentifier(siid=5, piid=107, name="service5_energy_index")
 SERVICE5_PROPERTY_108 = PropertyIdentifier(siid=5, piid=108, name="service5_property_108")
 

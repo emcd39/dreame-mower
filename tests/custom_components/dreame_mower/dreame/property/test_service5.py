@@ -9,12 +9,12 @@ from custom_components.dreame_mower.dreame.property.service5 import (
     TASK_STATUS_DESCRIPTION_FIELD,
     TASK_STATUS_MAPPING,
     SERVICE5_PROPERTY_105_PROPERTY_NAME,
-    BMS_PHASE_PROPERTY_NAME,
+    SERVICE5_PROPERTY_106_PROPERTY_NAME,
     SERVICE5_ENERGY_INDEX_PROPERTY_NAME,
     SERVICE5_PROPERTY_108_PROPERTY_NAME,
     TASK_STATUS_CODE_FIELD,
     PROPERTY_105_VALUE_FIELD,
-    BMS_PHASE_CODE_FIELD,
+    PROPERTY_106_VALUE_FIELD,
     ENERGY_INDEX_VALUE_FIELD,
     PROPERTY_108_VALUE_FIELD,
 )
@@ -139,18 +139,18 @@ class TestService5PropertyHandler:
         assert result is False
         assert self.handler.property_105_value is None
 
-    def test_handle_bms_phase_property(self):
-        """Test handling BMS phase property 5:106."""
+    def test_handle_property_106(self):
+        """Test handling property 5:106."""
         result = self.handler.handle_property_update(5, 106, 3, self.notify_callback)
         
         assert result is True
-        assert self.handler.bms_phase_code == 3
+        assert self.handler.property_106_value == 3
         
         # Verify notifications
         assert len(self.notifications) == 2
-        assert self.notifications[0][0] == BMS_PHASE_PROPERTY_NAME
-        assert self.notifications[0][1][BMS_PHASE_CODE_FIELD] == 3
-        assert self.notifications[1][0] == "bms_phase_code"
+        assert self.notifications[0][0] == SERVICE5_PROPERTY_106_PROPERTY_NAME
+        assert self.notifications[0][1][PROPERTY_106_VALUE_FIELD] == 3
+        assert self.notifications[1][0] == "service5_property_106_value"
         assert self.notifications[1][1] == 3
 
     def test_handle_energy_index_property(self):
@@ -279,11 +279,10 @@ class TestService5PropertyHandler:
         """Test initial state of handler."""
         assert self.handler.task_status_code is None
         assert self.handler.property_105_value is None
-        assert self.handler.bms_phase_code is None
+        assert self.handler.property_106_value is None
         assert self.handler.energy_index is None
         assert self.handler.property_108_value is None
         assert self.handler.has_energy_tracking is False
-        assert self.handler.is_charging_phase_active is False
 
     def test_has_energy_tracking_property(self):
         """Test has_energy_tracking property."""
@@ -292,11 +291,3 @@ class TestService5PropertyHandler:
         self.handler.handle_property_update(5, 107, 100, self.notify_callback)
         
         assert self.handler.has_energy_tracking is True
-
-    def test_is_charging_phase_active_property(self):
-        """Test is_charging_phase_active property."""
-        assert self.handler.is_charging_phase_active is False
-        
-        self.handler.handle_property_update(5, 106, 1, self.notify_callback)
-        
-        assert self.handler.is_charging_phase_active is True
