@@ -6,9 +6,12 @@ from pathlib import Path
 from unittest.mock import AsyncMock, Mock, patch
 
 import pytest
+from homeassistant.components.lawn_mower import LawnMowerActivity
 
 from custom_components.dreame_mower.camera import DreameMowerCameraEntity
 from custom_components.dreame_mower.coordinator import DreameMowerCoordinator
+from custom_components.dreame_mower.dreame.const import POSE_COVERAGE_PROPERTY, STATUS_PROPERTY
+from custom_components.dreame_mower.dreame.property.pose_coverage import POSE_COVERAGE_COORDINATES_PROPERTY_NAME
 
 
 # Path to test data
@@ -28,6 +31,10 @@ def mock_coordinator():
     coordinator.device.status_code = 1  # Some default status
     coordinator.device.register_property_callback = Mock()
     coordinator.device.mower_coordinates = None  # No current position by default
+    coordinator.device.cloud_device = Mock()
+    coordinator.device.cloud_device.get_properties = Mock()
+    coordinator.device_connected = True
+    coordinator.device.device_reachable = True
     return coordinator
 
 
@@ -43,7 +50,11 @@ def mock_config_entry():
 @pytest.fixture
 def camera_entity(mock_coordinator, mock_config_entry):
     """Create a camera entity instance."""
-    return DreameMowerCameraEntity(mock_coordinator, mock_config_entry)
+    with patch("custom_components.dreame_mower.camera.DreameMowerCameraEntity._refresh_historical_files_cache", new_callable=AsyncMock):
+        entity = DreameMowerCameraEntity(mock_coordinator, mock_config_entry)
+        # Mock the timer to avoid actual threading
+        entity._pose_coverage_timer = Mock()
+        return entity
 
 
 @pytest.fixture
@@ -108,3 +119,99 @@ class TestDreameMowerCameraEntity:
             f"Actual file saved to: {actual_svg_file}"
         )
 
+    @pytest.mark.asyncio
+    async def test_request_pose_coverage_success(self, camera_entity, mock_coordinator):
+        """Test successful pose coverage request."""
+        mock_coordinator.device_connected = True
+        mock_coordinator.device.device_reachable = True
+        
+        # Mock run_in_executor to execute the lambda immediately
+        async def mock_run_in_executor(executor, func, *args):
+            return func(*args)
+            
+        with patch("asyncio.get_event_loop") as mock_loop:
+            mock_loop.return_value.run_in_executor = AsyncMock(side_effect=mock_run_in_executor)
+            
+            await camera_entity._request_pose_coverage_property()
+            
+            # Verify get_properties was called
+            mock_coordinator.device.cloud_device.get_properties.assert_called_once()
+            args = mock_coordinator.device.cloud_device.get_properties.call_args[0][0]
+            assert args[0]["siid"] == POSE_COVERAGE_PROPERTY.siid
+            assert args[0]["piid"] == POSE_COVERAGE_PROPERTY.piid
+
+    @pytest.mark.asyncio
+    async def test_request_pose_coverage_skipped_if_disconnected(self, camera_entity, mock_coordinator):
+        """Test request skipped if device not connected."""
+        mock_coordinator.device_connected = False
+        
+        await camera_entity._request_pose_coverage_property()
+        
+        mock_coordinator.device.cloud_device.get_properties.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_request_pose_coverage_skipped_if_unreachable(self, camera_entity, mock_coordinator):
+        """Test request skipped if device not reachable."""
+        mock_coordinator.device_connected = True
+        mock_coordinator.device.device_reachable = False
+        
+        await camera_entity._request_pose_coverage_property()
+        
+        mock_coordinator.device.cloud_device.get_properties.assert_not_called()
+
+    @pytest.mark.asyncio
+    async def test_request_pose_coverage_handles_timeout(self, camera_entity, mock_coordinator):
+        """Test handling of TimeoutError (device offline)."""
+        mock_coordinator.device_connected = True
+        mock_coordinator.device.device_reachable = True
+        
+        # Mock run_in_executor to raise TimeoutError
+        async def mock_run_in_executor(*args, **kwargs):
+            raise TimeoutError("Device offline")
+            
+        with patch("asyncio.get_event_loop") as mock_loop:
+            mock_loop.return_value.run_in_executor = AsyncMock(side_effect=mock_run_in_executor)
+            
+            # Setup timer mock
+            timer_mock = Mock()
+            camera_entity._pose_coverage_timer = timer_mock
+            
+            await camera_entity._request_pose_coverage_property()
+            
+            # Verify timer was cancelled (stopped)
+            timer_mock.cancel.assert_called_once()
+            assert camera_entity._pose_coverage_timer is None
+
+    def test_handle_property_change_resumes_polling(self, camera_entity, mock_coordinator):
+        """Test that property change resumes polling if device becomes reachable."""
+        # Setup state: device reachable, undocked, but timer stopped (e.g. after offline)
+        mock_coordinator.device.device_reachable = True
+        camera_entity._docked = False
+        camera_entity._pose_coverage_timer = None
+        
+        with patch.object(camera_entity, "_start_pose_coverage_timer") as mock_start:
+            # Trigger property change
+            camera_entity._handle_property_change("some_property", "value")
+            
+            # Verify timer started
+            mock_start.assert_called_once()
+
+    def test_handle_property_change_does_not_resume_if_docked(self, camera_entity, mock_coordinator):
+        """Test that polling does not resume if device is docked."""
+        mock_coordinator.device.device_reachable = True
+        camera_entity._docked = True
+        camera_entity._pose_coverage_timer = None
+        
+        with patch.object(camera_entity, "_start_pose_coverage_timer") as mock_start:
+            camera_entity._handle_property_change("some_property", "value")
+            mock_start.assert_not_called()
+
+    def test_handle_property_change_does_not_resume_if_unreachable(self, camera_entity, mock_coordinator):
+        """Test that polling does not resume if device is still unreachable."""
+        mock_coordinator.device.device_reachable = False
+        camera_entity._docked = False
+        camera_entity._pose_coverage_timer = None
+        
+        with patch.object(camera_entity, "_start_pose_coverage_timer") as mock_start:
+            camera_entity._handle_property_change("some_property", "value")
+            mock_start.assert_not_called()

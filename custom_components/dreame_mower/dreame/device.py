@@ -153,6 +153,11 @@ class DreameMowerDevice:
         return self._cloud_device.connected
 
     @property
+    def device_reachable(self) -> bool:
+        """Return True if device is reachable via cloud API."""
+        return self._cloud_device.device_reachable
+
+    @property
     def firmware(self) -> str:
         """Return device firmware version."""
         return self._firmware

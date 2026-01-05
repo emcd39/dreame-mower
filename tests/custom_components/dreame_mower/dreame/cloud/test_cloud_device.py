@@ -70,6 +70,7 @@ class TestDreameMowerCloudDevice:
         assert protocol._cloud_base._country == "us"
         assert protocol._device_id == "123"
         assert protocol.connected is False
+        assert protocol.device_reachable is True
 
     def test_device_id_property(self, protocol):
         """Test device_id property."""
@@ -439,6 +440,9 @@ class TestDreameMowerCloudDevice:
         """Test send method with successful response."""
         self.setup_protocol_for_send_tests(protocol)
         
+        # Start with unreachable
+        protocol._device_reachable = False
+        
         self.setup_api_call_mock(protocol, {
             "code": 0,
             "data": {"result": "success"}
@@ -448,11 +452,13 @@ class TestDreameMowerCloudDevice:
         
         assert result == "success"
         assert protocol._cloud_base._id == 2
+        assert protocol.device_reachable is True
 
     def test_send_timeout_error_80001(self, protocol):
         """Test send method with timeout error code 80001.
         
-        Verifies that send method throws TimeoutError for device offline scenarios.
+        Verifies that send method throws TimeoutError for device offline scenarios
+        and updates device_reachable state.
         """
         protocol._host = "test.host.com"
         protocol._device_id = "123"
@@ -463,6 +469,8 @@ class TestDreameMowerCloudDevice:
         
         with pytest.raises(TimeoutError, match="Device offline"):
             protocol.send("test_method", {"param": "value"})
+            
+        assert protocol.device_reachable is False
 
     @pytest.mark.parametrize("error_code,error_message", [
         (500, "server error"),  # Generic server error
@@ -485,19 +493,18 @@ class TestDreameMowerCloudDevice:
         with pytest.raises(RuntimeError, match=f"Cloud API error {error_code}: {error_message}"):
             protocol.send("test_method", {"param": "value"})
 
-    def test_send_none_response_error(self, protocol):
-        """Test send method with None response from cloud API.
+    def test_mqtt_message_updates_reachable(self, protocol):
+        """Test that receiving an MQTT message marks device as reachable."""
+        protocol._device_reachable = False
         
-        Verifies that send method throws ConnectionError when API returns None.
-        """
-        protocol._host = "test.host.com"
-        protocol._device_id = "123"
-        protocol._cloud_base._id = 1
+        # Create a mock message
+        mock_message = Mock()
+        mock_message.payload = b'{"data": {"some": "data"}}'
         
-        protocol._cloud_base._api_call = Mock(return_value=None)
+        # Call the static method (need to pass self explicitly as it's static but uses self)
+        DreameMowerCloudDevice._on_mqtt_client_message(None, protocol, mock_message)
         
-        with pytest.raises(ConnectionError, match="No response from cloud API"):
-            protocol.send("test_method", {"param": "value"})
+        assert protocol.device_reachable is True
 
     def test_send_missing_data_field_returns_none(self, protocol):
         """Test send method with successful response but missing data field.

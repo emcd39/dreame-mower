@@ -46,9 +46,10 @@ class DreameMowerCloudDevice:
         self._mqtt_message_callback = None
         self._mqtt_connected_callback = None
         self._mqtt_disconnected_callback = None
-    # Stream key not required for MQTT; removed to simplify state
-        self._mqtt_client_key: Optional[str] = None
-
+        # Stream key not required for MQTT; removed to simplify state
+        self._mqtt_client_key: Optional[str] = None        
+        # Track if device is reachable via cloud API
+        self._device_reachable = True
     @property
     def device_id(self) -> str:
         return self._device_id
@@ -62,6 +63,11 @@ class DreameMowerCloudDevice:
     @property
     def connected(self) -> bool:
         return self._cloud_base.connected and self._mqtt_client_connected
+
+    @property
+    def device_reachable(self) -> bool:
+        """Return True if the device is reachable via cloud API."""
+        return self._device_reachable
 
     def disconnect(self):
         """Disconnect both MQTT and cloud base."""
@@ -184,6 +190,9 @@ class DreameMowerCloudDevice:
 
     @staticmethod
     def _on_mqtt_client_message(client, self, message):
+        # Receiving a message means the device is reachable
+        self._device_reachable = True
+        
         if self._mqtt_message_callback:
             try:
                 payload = message.payload.decode("utf-8")
@@ -387,6 +396,7 @@ class DreameMowerCloudDevice:
 
         # Handle device offline/timeout specifically
         if api_response and api_response.get("code") == 80001:
+            self._device_reachable = False
             _LOGGER.warning(
                 "DreameMowerCloudDevice.send device offline (80001): %s", api_response)
             raise TimeoutError(
@@ -404,6 +414,9 @@ class DreameMowerCloudDevice:
         if api_response is None:
             _LOGGER.warning("DreameMowerCloudDevice.send received None response")
             raise ConnectionError("No response from cloud API")
+        
+        # Successful response - device is reachable
+        self._device_reachable = True
         
         if "data" not in api_response:
             _LOGGER.debug("DreameMowerCloudDevice.send response has no 'data' field: %s", api_response)

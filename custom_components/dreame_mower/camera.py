@@ -126,6 +126,10 @@ class DreameMowerCameraEntity(DreameMowerEntity, Camera):
         after POSE_COVERAGE_REQUEST_INTERVAL if not requested. This method keeps the data
         flowing.
         """
+        # Don't request if device is not connected or not reachable
+        if not self.coordinator.device_connected or not self.coordinator.device.device_reachable:
+            return
+
         try:
             parameters = [{
                 "siid": POSE_COVERAGE_PROPERTY.siid,
@@ -136,6 +140,11 @@ class DreameMowerCameraEntity(DreameMowerEntity, Camera):
                 None,
                 lambda: self.coordinator.device.cloud_device.get_properties(parameters, retry_count=1)
             )
+        except TimeoutError:
+            # Device offline - stop timer to avoid spamming
+            # The timer will be restarted when device becomes reachable again (via property update)
+            _LOGGER.warning("Device offline, pausing pose coverage requests")
+            self._stop_pose_coverage_timer()
         except Exception as ex:
             _LOGGER.warning("Failed to request pose coverage property: %s", ex)
 
@@ -219,6 +228,14 @@ class DreameMowerCameraEntity(DreameMowerEntity, Camera):
 
     def _handle_property_change(self, property_name: str, value: Any) -> None:
         """Handle property changes from the device."""
+        # If device is reachable and we are in live mode but timer is stopped, restart it
+        # This handles recovery from offline state
+        if (self.coordinator.device.device_reachable and 
+            not self._docked and 
+            self._pose_coverage_timer is None):
+            _LOGGER.info("Device is back online, resuming pose coverage requests")
+            self._start_pose_coverage_timer()
+
         if property_name == POSE_COVERAGE_COORDINATES_PROPERTY_NAME:
             self._handle_live_coordinates_update(value)
         elif property_name == STATUS_PROPERTY.name:
