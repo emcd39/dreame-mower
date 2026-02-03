@@ -62,31 +62,34 @@ class DreameHoldEntity(DreameMowerEntity, StateVacuumEntity):
     def _update_state(self) -> None:
         """Update entity state from coordinator data."""
         try:
-            # Get device info from coordinator
-            device_info = self.coordinator.device._cloud_base.get_devices()
-            if device_info and "page" in device_info:
-                records = device_info["page"].get("records", [])
-                for record in records:
-                    if record.get("did") == self.coordinator.device.device_id:
-                        # Update battery
-                        self._attr_battery_level = record.get("battery")
-                        # Update state based on latestStatus
-                        status_code = record.get("latestStatus", 7)
-                        self._attr_state = self._map_status_to_state(status_code)
-                        break
+            # Get battery from device
+            self._attr_battery_level = self.coordinator.device.battery_percent
+
+            # Get status code and map to HA state
+            status_code = self.coordinator.device.status_code
+            self._attr_state = self._map_status_to_state(status_code)
         except Exception as ex:
             _LOGGER.exception("Error updating state: %s", ex)
 
     def _map_status_to_state(self, status_code: int) -> str | None:
         """Map device status code to HA vacuum state."""
-        # Status codes for hold devices:
-        # 7 = standby/docked
-        # 1-6 = various working states
-        if status_code == 7:
-            return "docked"
-        elif status_code in [1, 2, 3, 4, 5, 6]:
+        # Status codes (shared with mower):
+        # 0: no_status, 1: mowing/cleaning, 2: standby, 3: paused
+        # 4: error, 5: returning, 6: charging, 11: mapping, 13: charging_complete
+        if status_code == 1:
             return "cleaning"
+        elif status_code == 2:
+            return "docked"
+        elif status_code == 3:
+            return "paused"
+        elif status_code == 4:
+            return "error"
+        elif status_code == 5:
+            return "returning"
+        elif status_code in [6, 13]:
+            return "docked"
         else:
+            # Default to docked for unknown states
             return "docked"
 
     @property
