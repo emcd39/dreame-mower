@@ -68,6 +68,10 @@ from .const import (
     ACTION_STOP,
     ACTION_DOCK,
     DEVICE_CODE_PROPERTY,
+    # Hold device imports
+    HOLD_MODELS,
+    HOLD_STATUS_MAPPING,
+    HOLD_STATUS_CODE_PROPERTY,
     # Hold device actions
     HOLD_ACTION_START,
     HOLD_ACTION_STOP,
@@ -183,8 +187,19 @@ class DreameMowerDevice:
 
     @property
     def status(self) -> str:
-        """Return device status."""
-        return STATUS_MAPPING.get(self._status_code, f"Unknown ({self._status_code})")
+        """Return device status.
+
+        Uses HOLD_STATUS_MAPPING for hold devices (H20), STATUS_MAPPING for mowers.
+        """
+        # Check if this is a hold device (handheld floor washer)
+        model = self._cloud_device._model
+        if model and any(model.startswith(prefix) for prefix in HOLD_MODELS):
+            # Use H20-specific status mapping
+            from .const import HOLD_STATUS_MAPPING
+            return HOLD_STATUS_MAPPING.get(self._status_code, f"Unknown ({self._status_code})")
+        else:
+            # Use mower status mapping
+            return STATUS_MAPPING.get(self._status_code, f"Unknown ({self._status_code})")
 
     @property
     def status_code(self) -> int:
