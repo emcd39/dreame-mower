@@ -190,18 +190,28 @@ HOLD_ACTION_START_DRYING = ActionIdentifier(siid=17, aiid=1, name="start_drying"
 HOLD_ACTION_STOP_DRYING = ActionIdentifier(siid=17, aiid=2, name="stop_drying")
 
 # Hold device status mappings
+# From dreame.hold.w2422 iotKeyValue JSON
 HOLD_STATUS_MAPPING = {
-    1: "cleaning",
-    2: "idle",
-    3: "paused",
-    4: "error",
-    5: "remote_control",
-    6: "returning",
-    7: "charging",
-    8: "docking",
-    10: "self_cleaning",
-    11: "drying",
-    12: "deep_cleaning",
+    1: "mopping",           # 正在洗地
+    2: "offline",           # 离线
+    3: "standby",           # 待机中
+    4: "charging",          # 正在充电
+    5: "self_cleaning",     # 正在自清洁 ⭐
+    6: "drying",            # 正在烘干 ⭐
+    7: "sleeping",          # 休眠中
+    8: "vacuuming",         # 正在吸尘
+    9: "adding_water",      # 正在加注清水
+    10: "paused",           # 洗地暂停中
+    11: "paused",           # 自清洁暂停中
+    12: "paused",           # 烘干暂停中
+    13: "updating",         # OTA升级中
+    14: "updating",         # 语音包升级中
+    15: "charged",          # 充电完成
+    26: "hot_water_cleaning",  # 正在热水自清洁 ⭐
+    27: "deep_cleaning",    # 正在深度热水自清洁 ⭐
+    28: "self_cleaning",     # 正在自清洁
+    32: "fast_drying",      # 正在快速烘干 ⭐
+    33: "fast_drying",      # 正在快速烘干
 }
 
 # Hold device cleaning modes
