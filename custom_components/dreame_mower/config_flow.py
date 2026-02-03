@@ -18,7 +18,15 @@ from homeassistant.helpers.device_registry import format_mac
 from homeassistant.core import callback
 
 from .dreame.cloud.cloud_base import DreameMowerCloudBase
-from .const import CONF_NOTIFY, CONF_MAP_ROTATION, DOMAIN
+from .const import (
+    CONF_NOTIFY,
+    CONF_MAP_ROTATION,
+    CONF_DEVICE_TYPE,
+    DOMAIN,
+    DeviceType,
+    HOLD_MODELS,
+    MOWER_MODELS,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -38,15 +46,20 @@ ACCOUNT_TITLE_MOVA = "MOVAhome Account"
 DREAME_MODELS = [
     "dreame.mower.",
     "mova.mower.",
+    "dreame.hold.",
+    "mova.hold.",
 ]
 
 model_map = {
+    # Lawn mowers
     "dreame.mower.p2255": "DREAME A1",
-    "dreame.mower.g2422": "DREAME A1 Pro", 
+    "dreame.mower.g2422": "DREAME A1 Pro",
     "dreame.mower.g2408": "DREAME A2",
     "mova.mower.g2405a": "MOVA 600",
     "mova.mower.g2405b": "MOVA 600 Kit",
     "mova.mower.g2405c": "MOVA 1000",
+    # Floor washers (hold devices)
+    "dreame.hold.w2422": "DREAME H20 Ultra",
 }
 
 # Notification options - focused on error, warning and info notifications
@@ -325,6 +338,7 @@ class DreameMowerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     CONF_MODEL: self.model,
                     CONF_SERIAL: self.serial_number,
                     CONF_ACCOUNT_TYPE: self.account_type,
+                    CONF_DEVICE_TYPE: self.device_type,
                 },
                 options={
                     CONF_NOTIFY: user_input[CONF_NOTIFY],
@@ -348,7 +362,15 @@ class DreameMowerConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self.mac = device_info.get("mac")  # MAC is directly in device_info, not nested
         self.model = device_info.get("model")
         self.serial_number = device_info.get("sn", "")  # Serial number never changes
-        
+
+        # Determine device type
+        if any(self.model.startswith(prefix) for prefix in MOWER_MODELS):
+            self.device_type = DeviceType.MOWER
+        elif any(self.model.startswith(prefix) for prefix in HOLD_MODELS):
+            self.device_type = DeviceType.HOLD
+        else:
+            self.device_type = DeviceType.MOWER  # Default to mower
+
         # Extract device name
         self.name = (
             device_info["customName"]
