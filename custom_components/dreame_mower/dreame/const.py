@@ -173,18 +173,21 @@ HOLD_DRYING_STATE_PROPERTY = PropertyIdentifier(siid=7, piid=1, name="drying_sta
 
 # Hold device action identifiers
 # Basic cleaning controls
-HOLD_ACTION_START = ActionIdentifier(siid=3, aiid=1, name="hold_start")
-HOLD_ACTION_STOP = ActionIdentifier(siid=3, aiid=2, name="hold_stop")
-HOLD_ACTION_PAUSE = ActionIdentifier(siid=3, aiid=3, name="hold_pause")
+# Using common vacuum/mower controls at siid=5
+HOLD_ACTION_START = ActionIdentifier(siid=5, aiid=1, name="hold_start")
+HOLD_ACTION_STOP = ActionIdentifier(siid=5, aiid=2, name="hold_stop")
+HOLD_ACTION_PAUSE = ActionIdentifier(siid=5, aiid=4, name="hold_pause")
 
 # Self-clean controls
-HOLD_ACTION_START_SELF_CLEAN = ActionIdentifier(siid=6, aiid=1, name="start_self_clean")
-HOLD_ACTION_STOP_SELF_CLEAN = ActionIdentifier(siid=6, aiid=2, name="stop_self_clean")
-HOLD_ACTION_START_DEEP_CLEAN = ActionIdentifier(siid=6, aiid=3, name="start_deep_clean")
+# Using base station wash service siid=16 (common for Dreame washers)
+HOLD_ACTION_START_SELF_CLEAN = ActionIdentifier(siid=16, aiid=1, name="start_self_clean")
+HOLD_ACTION_STOP_SELF_CLEAN = ActionIdentifier(siid=16, aiid=2, name="stop_self_clean")
+HOLD_ACTION_START_DEEP_CLEAN = ActionIdentifier(siid=16, aiid=3, name="start_deep_clean")
 
 # Drying controls
-HOLD_ACTION_START_DRYING = ActionIdentifier(siid=7, aiid=1, name="start_drying")
-HOLD_ACTION_STOP_DRYING = ActionIdentifier(siid=7, aiid=2, name="stop_drying")
+# Using base station dry service siid=17 (common for Dreame washers)
+HOLD_ACTION_START_DRYING = ActionIdentifier(siid=17, aiid=1, name="start_drying")
+HOLD_ACTION_STOP_DRYING = ActionIdentifier(siid=17, aiid=2, name="stop_drying")
 
 # Hold device status mappings
 HOLD_STATUS_MAPPING = {
