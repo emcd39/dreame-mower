@@ -13,7 +13,7 @@ from homeassistant.components.vacuum import (
     VacuumEntityFeature,
 )
 
-from .const import DATA_COORDINATOR, DOMAIN
+from .const import DATA_COORDINATOR, DOMAIN, DeviceType
 from .coordinator import DreameMowerCoordinator
 from .entity import DreameMowerEntity
 
@@ -37,7 +37,7 @@ async def async_setup_entry(
     coordinator: DreameMowerCoordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
 
     # Only create hold entity if device type is 'hold'
-    if entry.data.get("device_type") == "hold":
+    if entry.data.get("device_type") == DeviceType.HOLD:
         async_add_entities([DreameHoldEntity(coordinator)])
 
 
@@ -123,6 +123,6 @@ class DreameHoldEntity(DreameMowerEntity, StateVacuumEntity):
         except Exception as ex:
             _LOGGER.error("Error pausing: %s", ex)
 
-    async def async_return_to_base(self, None) -> None:
+    async def async_return_to_base(self) -> None:
         """Return to dock (not applicable for handheld devices)."""
         _LOGGER.info("Return to base not supported for handheld floor washers")
