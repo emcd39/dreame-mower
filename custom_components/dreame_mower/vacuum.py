@@ -76,43 +76,75 @@ class DreameHoldEntity(DreameMowerEntity, StateVacuumEntity):
     def _map_status_to_state(self, status_code: int) -> str | None:
         """Map H20 device status code to HA vacuum state.
 
-        H20 status codes (from HOLD_STATUS_MAPPING):
-        - 1: mopping → cleaning
-        - 2: offline → docked
-        - 3: standby → docked
-        - 4: charging → docked
-        - 5, 26, 28: self_cleaning → cleaning
-        - 6: drying → cleaning
-        - 7: sleeping → docked
-        - 8: vacuuming → cleaning
-        - 9: adding_water → cleaning
-        - 10, 11, 12: paused → paused
-        - 13, 14: updating → docked
-        - 15: charged → docked
-        - 27: deep_cleaning → cleaning
-        - 32, 33: fast_drying → cleaning
+        Complete status mapping from official iotKeyValue spec:
+        https://cnbj2.fds.api.xiaomi.com/000000-public/file/c9d38fbfb7e45c79cfe7830e0b8ab40099759e7d_dreame.hold.w2422_iotKeyValue_translate_20.json
+
+        Status codes 1-33:
         """
         if status_code is None:
             return None
 
-        # Get the H20 status from HOLD_STATUS_MAPPING
-        h20_status = HOLD_STATUS_MAPPING.get(status_code, "standby")
-
-        # Map H20 status to HA vacuum states
-        if h20_status in ["mopping", "vacuuming", "adding_water",
-                         "self_cleaning", "hot_water_cleaning", "deep_cleaning",
-                         "drying", "fast_drying"]:
+        # Mopping/Cleaning states → "cleaning"
+        if status_code in [
+            1,   # 正在洗地 / Mop in progress
+            16,  # 正在洗地 / Mop in progress
+            17,  # 正在洗地 / Mop in progress
+            18,  # 正在洗地 / Mop in progress
+            19,  # 正在洗地 / Mop in progress
+            20,  # 正在洗地 / Mop in progress
+            21,  # 正在洗地 / Mop in progress
+            22,  # 正在洗地 / Mop in progress
+            8,   # 正在吸尘 / Vacuum cleaning in progress
+            9,   # 正在加注清水 / Adding water
+        ]:
             return "cleaning"
-        elif h20_status in ["offline", "standby", "charging", "charged",
-                           "sleeping", "updating"]:
-            return "docked"
-        elif h20_status == "paused":
+
+        # Self-cleaning states → "cleaning"
+        if status_code in [
+            5,   # 正在自清洁 / Self-Cleaning
+            26,  # 正在热水自清洁 / Hot water self-cleaning in progress
+            27,  # 正在深度热水自清洁 / Deep hot water self-cleaning in progress
+            28,  # 正在自清洁 / Self-Cleaning
+        ]:
+            return "cleaning"
+
+        # Drying states → "cleaning"
+        if status_code in [
+            6,   # 正在烘干 / Drying
+            23,  # 正在烘干 / Drying
+            24,  # 正在烘干 / Drying
+            25,  # 正在烘干 / Drying
+            32,  # 正在快速烘干 / Fast drying in progress
+            33,  # 正在快速烘干 / Fast drying in progress
+        ]:
+            return "cleaning"
+
+        # Paused states → "paused"
+        if status_code in [
+            10,  # 洗地暂停中 / Washing floor paused
+            11,  # 自清洁暂停中 / Self-Cleaning Paused
+            12,  # 烘干暂停中 / Drying paused
+            29,  # 吸尘暂停中 / Vacuum cleaning paused
+            30,  # 热水自清洁暂停中 / Hot water self-cleaning paused
+            31,  # 深度热水自清洁暂停中 / Deep hot water self-cleaning paused
+        ]:
             return "paused"
-        elif h20_status == "error":
-            return "error"
-        else:
-            # Default to docked for unknown states
+
+        # Docked/Idle states → "docked"
+        if status_code in [
+            2,    # 离线 / Offline
+            3,    # 待机中 / Standby
+            4,    # 正在充电 / Charging
+            7,    # 休眠中 / Sleeping Mode
+            13,   # OTA升级中 / OTA upgrade in progress
+            14,   # 语音包升级中 / Voice package upgrade in progress
+            15,   # 充电完成 / Charging Completed
+        ]:
             return "docked"
+
+        # Default to docked for any unknown status
+        _LOGGER.warning("Unknown status code %d, defaulting to docked", status_code)
+        return "docked"
 
     @property
     def available(self) -> bool:
