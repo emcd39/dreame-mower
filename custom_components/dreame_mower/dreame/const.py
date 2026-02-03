@@ -179,15 +179,34 @@ HOLD_ACTION_STOP = ActionIdentifier(siid=5, aiid=2, name="hold_stop")
 HOLD_ACTION_PAUSE = ActionIdentifier(siid=5, aiid=4, name="hold_pause")
 
 # Self-clean controls
-# Using base station wash service siid=16 (common for Dreame washers)
-HOLD_ACTION_START_SELF_CLEAN = ActionIdentifier(siid=16, aiid=1, name="start_self_clean")
-HOLD_ACTION_STOP_SELF_CLEAN = ActionIdentifier(siid=16, aiid=2, name="stop_self_clean")
-HOLD_ACTION_START_DEEP_CLEAN = ActionIdentifier(siid=16, aiid=3, name="start_deep_clean")
+# H20 is a handheld device, so try different siid values than robot vacuums
+# These are candidates to test - uncomment one at a time to test
+# Option 1: Try siid=6 (common for wash/clean service)
+HOLD_ACTION_START_SELF_CLEAN = ActionIdentifier(siid=6, aiid=1, name="start_self_clean")
+HOLD_ACTION_STOP_SELF_CLEAN = ActionIdentifier(siid=6, aiid=2, name="stop_self_clean")
+# Option 2: Try siid=4 with mode parameter (status/mode control)
+# HOLD_ACTION_START_SELF_CLEAN = ActionIdentifier(siid=4, aiid=1, name="start_self_clean")
+# Option 3: Try using same siid as basic controls (siid=5)
+# HOLD_ACTION_START_SELF_CLEAN = ActionIdentifier(siid=5, aiid=3, name="start_self_clean")
+
+# Deep clean variants
+# Test different aiid values for siid=6
+HOLD_ACTION_START_DEEP_CLEAN = ActionIdentifier(siid=6, aiid=3, name="start_deep_clean")
+# Alternative: Try with siid=4
+# HOLD_ACTION_START_DEEP_CLEAN = ActionIdentifier(siid=4, aiid=2, name="start_deep_clean")
 
 # Drying controls
-# Using base station dry service siid=17 (common for Dreame washers)
-HOLD_ACTION_START_DRYING = ActionIdentifier(siid=17, aiid=1, name="start_drying")
-HOLD_ACTION_STOP_DRYING = ActionIdentifier(siid=17, aiid=2, name="stop_drying")
+# Try siid=7 (common for dry service)
+HOLD_ACTION_START_DRYING = ActionIdentifier(siid=7, aiid=1, name="start_drying")
+HOLD_ACTION_STOP_DRYING = ActionIdentifier(siid=7, aiid=2, name="stop_drying")
+# Alternative: Try using siid=6 or siid=5
+# HOLD_ACTION_START_DRYING = ActionIdentifier(siid=6, aiid=4, name="start_drying")
+
+# Additional test variants (commented out - can be enabled for testing)
+# HOLD_ACTION_TEST_6_5 = ActionIdentifier(siid=6, aiid=5, name="test_6_5")
+# HOLD_ACTION_TEST_6_6 = ActionIdentifier(siid=6, aiid=6, name="test_6_6")
+# HOLD_ACTION_TEST_4_3 = ActionIdentifier(siid=4, aiid=3, name="test_4_3")
+# HOLD_ACTION_TEST_4_4 = ActionIdentifier(siid=4, aiid=4, name="test_4_4")
 
 # Hold device status mappings
 # From dreame.hold.w2422 iotKeyValue JSON
