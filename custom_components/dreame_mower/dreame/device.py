@@ -68,6 +68,15 @@ from .const import (
     ACTION_STOP,
     ACTION_DOCK,
     DEVICE_CODE_PROPERTY,
+    # Hold device actions
+    HOLD_ACTION_START,
+    HOLD_ACTION_STOP,
+    HOLD_ACTION_PAUSE,
+    HOLD_ACTION_START_SELF_CLEAN,
+    HOLD_ACTION_STOP_SELF_CLEAN,
+    HOLD_ACTION_START_DEEP_CLEAN,
+    HOLD_ACTION_START_DRYING,
+    HOLD_ACTION_STOP_DRYING,
 )
 
 _LOGGER = logging.getLogger(__name__)
@@ -867,4 +876,97 @@ class DreameMowerDevice:
             return False
        
         self._notify_property_change("activity", "docked")
+        return True
+
+
+    # ============================================================================
+    # HOLD DEVICE (FLOOR WASHER) CONTROL METHODS
+    # ============================================================================
+
+    async def hold_start_cleaning(self) -> bool:
+        """Start cleaning operation for hold device."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_START)
+        ):
+            _LOGGER.error("Failed to send HOLD_START command")
+            return False
+
+        self._notify_property_change("activity", "cleaning")
+        return True
+
+    async def hold_stop(self) -> bool:
+        """Stop operation for hold device."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_STOP)
+        ):
+            _LOGGER.error("Failed to send HOLD_STOP command")
+            return False
+
+        self._notify_property_change("activity", "idle")
+        return True
+
+    async def hold_pause(self) -> bool:
+        """Pause operation for hold device."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_PAUSE)
+        ):
+            _LOGGER.error("Failed to send HOLD_PAUSE command")
+            return False
+
+        self._notify_property_change("activity", "paused")
+        return True
+
+    async def hold_start_self_clean(self) -> bool:
+        """Start self-cleaning cycle."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_START_SELF_CLEAN)
+        ):
+            _LOGGER.error("Failed to send START_SELF_CLEAN command")
+            return False
+
+        self._notify_property_change("activity", "self_cleaning")
+        return True
+
+    async def hold_stop_self_clean(self) -> bool:
+        """Stop self-cleaning cycle."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_STOP_SELF_CLEAN)
+        ):
+            _LOGGER.error("Failed to send STOP_SELF_CLEAN command")
+            return False
+
+        self._notify_property_change("activity", "idle")
+        return True
+
+    async def hold_start_deep_clean(self) -> bool:
+        """Start deep cleaning cycle."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_START_DEEP_CLEAN)
+        ):
+            _LOGGER.error("Failed to send START_DEEP_CLEAN command")
+            return False
+
+        self._notify_property_change("activity", "deep_cleaning")
+        return True
+
+    async def hold_start_drying(self) -> bool:
+        """Start drying cycle."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_START_DRYING)
+        ):
+            _LOGGER.error("Failed to send START_DRYING command")
+            return False
+
+        self._notify_property_change("activity", "drying")
+        return True
+
+    async def hold_stop_drying(self) -> bool:
+        """Stop drying cycle."""
+        if not await asyncio.get_event_loop().run_in_executor(
+            None, lambda: self._cloud_device.execute_action(HOLD_ACTION_STOP_DRYING)
+        ):
+            _LOGGER.error("Failed to send STOP_DRYING command")
+            return False
+
+        self._notify_property_change("activity", "idle")
         return True

@@ -21,12 +21,13 @@ ALL_PLATFORMS = (
     Platform.VACUUM,  # For hold devices (floor washers)
     Platform.SENSOR,
     Platform.CAMERA,
+    Platform.BUTTON,  # For hold device advanced features
 )
 
 # Platforms per device type
 PLATFORMS_BY_DEVICE_TYPE = {
     DeviceType.MOWER: (Platform.LAWN_MOWER, Platform.SENSOR, Platform.CAMERA),
-    DeviceType.HOLD: (Platform.VACUUM, Platform.SENSOR),
+    DeviceType.HOLD: (Platform.VACUUM, Platform.SENSOR, Platform.BUTTON),
     DeviceType.VACUUM: (Platform.VACUUM, Platform.SENSOR),
 }
 

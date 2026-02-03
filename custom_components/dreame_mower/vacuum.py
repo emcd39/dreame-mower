@@ -23,6 +23,7 @@ _LOGGER = logging.getLogger(__name__)
 SUPPORTED_FEATURES = (
     VacuumEntityFeature.START
     | VacuumEntityFeature.PAUSE
+    | VacuumEntityFeature.STOP
     | VacuumEntityFeature.STATUS
     | VacuumEntityFeature.BATTERY
 )
@@ -110,8 +111,7 @@ class DreameHoldEntity(DreameMowerEntity, StateVacuumEntity):
     async def async_start(self) -> None:
         """Start cleaning."""
         try:
-            # For now, just log - will implement actual control later
-            _LOGGER.info("Start cleaning requested")
+            await self.coordinator.device.hold_start_cleaning()
             self._attr_state = "cleaning"
             self.async_write_ha_state()
         except Exception as ex:
@@ -120,11 +120,20 @@ class DreameHoldEntity(DreameMowerEntity, StateVacuumEntity):
     async def async_pause(self) -> None:
         """Pause cleaning."""
         try:
-            _LOGGER.info("Pause requested")
+            await self.coordinator.device.hold_pause()
             self._attr_state = "paused"
             self.async_write_ha_state()
         except Exception as ex:
             _LOGGER.error("Error pausing: %s", ex)
+
+    async def async_stop(self, **kwargs: Any) -> None:
+        """Stop cleaning."""
+        try:
+            await self.coordinator.device.hold_stop()
+            self._attr_state = "docked"
+            self.async_write_ha_state()
+        except Exception as ex:
+            _LOGGER.error("Error stopping: %s", ex)
 
     async def async_return_to_base(self) -> None:
         """Return to dock (not applicable for handheld devices)."""

@@ -155,3 +155,80 @@ FIRMWARE_INSTALL_STATE_MAPPING: dict[int, str] = {
 # Individual property names
 PROPERTY_FIRMWARE = "firmware"
 PROPERTY_TEMPERATURE = "temperature"
+
+
+# ============================================================================
+# HOLD DEVICE (FLOOR WASHER) CONSTANTS
+# ============================================================================
+
+# Hold device property identifiers
+# Based on MIoT spec for Dreame floor washers (H20 Ultra, etc.)
+HOLD_STATUS_PROPERTY = PropertyIdentifier(siid=3, piid=1, name="hold_status")
+HOLD_ERROR_PROPERTY = PropertyIdentifier(siid=3, piid=2, name="hold_error")
+HOLD_BATTERY_PROPERTY = PropertyIdentifier(siid=3, piid=3, name="hold_battery")
+HOLD_CLEANING_MODE_PROPERTY = PropertyIdentifier(siid=4, piid=1, name="cleaning_mode")
+HOLD_WATER_LEVEL_PROPERTY = PropertyIdentifier(siid=4, piid=2, name="water_level")
+HOLD_SELF_CLEAN_STATE_PROPERTY = PropertyIdentifier(siid=6, piid=1, name="self_clean_state")
+HOLD_DRYING_STATE_PROPERTY = PropertyIdentifier(siid=7, piid=1, name="drying_state")
+
+# Hold device action identifiers
+# Basic cleaning controls
+HOLD_ACTION_START = ActionIdentifier(siid=3, aiid=1, name="hold_start")
+HOLD_ACTION_STOP = ActionIdentifier(siid=3, aiid=2, name="hold_stop")
+HOLD_ACTION_PAUSE = ActionIdentifier(siid=3, aiid=3, name="hold_pause")
+
+# Self-clean controls
+HOLD_ACTION_START_SELF_CLEAN = ActionIdentifier(siid=6, aiid=1, name="start_self_clean")
+HOLD_ACTION_STOP_SELF_CLEAN = ActionIdentifier(siid=6, aiid=2, name="stop_self_clean")
+HOLD_ACTION_START_DEEP_CLEAN = ActionIdentifier(siid=6, aiid=3, name="start_deep_clean")
+
+# Drying controls
+HOLD_ACTION_START_DRYING = ActionIdentifier(siid=7, aiid=1, name="start_drying")
+HOLD_ACTION_STOP_DRYING = ActionIdentifier(siid=7, aiid=2, name="stop_drying")
+
+# Hold device status mappings
+HOLD_STATUS_MAPPING = {
+    1: "cleaning",
+    2: "idle",
+    3: "paused",
+    4: "error",
+    5: "remote_control",
+    6: "returning",
+    7: "charging",
+    8: "docking",
+    10: "self_cleaning",
+    11: "drying",
+    12: "deep_cleaning",
+}
+
+# Hold device cleaning modes
+HOLD_CLEANING_MODES = {
+    0: "auto",
+    1: "standard",
+    2: "intense",
+    3: "silent",
+}
+
+# Hold device water levels
+HOLD_WATER_LEVELS = {
+    0: "low",
+    1: "medium",
+    2: "high",
+}
+
+# Self-clean states
+HOLD_SELF_CLEAN_STATES = {
+    0: "idle",
+    1: "cleaning",
+    2: "drying",
+    3: "completed",
+    4: "error",
+}
+
+# Drying states
+HOLD_DRYING_STATES = {
+    0: "idle",
+    1: "drying",
+    2: "completed",
+    3: "error",
+}
