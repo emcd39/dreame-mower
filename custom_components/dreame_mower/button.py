@@ -27,13 +27,12 @@ async def async_setup_entry(
     coordinator: DreameMowerCoordinator = hass.data[DOMAIN][entry.entry_id][DATA_COORDINATOR]
 
     # Only create buttons for hold devices
+    # NOTE: Advanced features (self-clean, deep clean, drying) disabled
+    # Handheld washers use physical buttons or different control method
+    # TODO: Find correct MIoT spec for dreame.hold.w2422
     if entry.data.get("device_type") == DeviceType.HOLD:
-        buttons = [
-            DreameHoldButton(coordinator, "self_clean", "Self Clean"),
-            DreameHoldButton(coordinator, "deep_clean", "Deep Clean"),
-            DreameHoldButton(coordinator, "drying", "Drying"),
-        ]
-        async_add_entities(buttons)
+        # No buttons for now - basic vacuum controls (start/pause/stop) should work
+        pass
 
 
 class DreameHoldButton(DreameMowerEntity, ButtonEntity):
