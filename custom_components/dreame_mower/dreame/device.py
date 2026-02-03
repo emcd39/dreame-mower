@@ -78,7 +78,6 @@ from .const import (
     HOLD_ACTION_START_DRYING,
     HOLD_ACTION_STOP_DRYING,
     HOLD_STATUS_MAPPING,
-    HOLD_STATUS_CODE_PROPERTY,
 )
 
 # Import HOLD_MODELS from parent const (integration level)
