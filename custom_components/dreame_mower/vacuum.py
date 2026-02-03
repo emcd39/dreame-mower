@@ -16,6 +16,7 @@ from homeassistant.components.vacuum import (
 from .const import DATA_COORDINATOR, DOMAIN, DeviceType
 from .coordinator import DreameMowerCoordinator
 from .entity import DreameMowerEntity
+from .dreame.const import HOLD_STATUS_MAPPING
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -73,22 +74,42 @@ class DreameHoldEntity(DreameMowerEntity, StateVacuumEntity):
             _LOGGER.exception("Error updating state: %s", ex)
 
     def _map_status_to_state(self, status_code: int) -> str | None:
-        """Map device status code to HA vacuum state."""
-        # Status codes (shared with mower):
-        # 0: no_status, 1: mowing/cleaning, 2: standby, 3: paused
-        # 4: error, 5: returning, 6: charging, 11: mapping, 13: charging_complete
-        if status_code == 1:
+        """Map H20 device status code to HA vacuum state.
+
+        H20 status codes (from HOLD_STATUS_MAPPING):
+        - 1: mopping → cleaning
+        - 2: offline → docked
+        - 3: standby → docked
+        - 4: charging → docked
+        - 5, 26, 28: self_cleaning → cleaning
+        - 6: drying → cleaning
+        - 7: sleeping → docked
+        - 8: vacuuming → cleaning
+        - 9: adding_water → cleaning
+        - 10, 11, 12: paused → paused
+        - 13, 14: updating → docked
+        - 15: charged → docked
+        - 27: deep_cleaning → cleaning
+        - 32, 33: fast_drying → cleaning
+        """
+        if status_code is None:
+            return None
+
+        # Get the H20 status from HOLD_STATUS_MAPPING
+        h20_status = HOLD_STATUS_MAPPING.get(status_code, "standby")
+
+        # Map H20 status to HA vacuum states
+        if h20_status in ["mopping", "vacuuming", "adding_water",
+                         "self_cleaning", "hot_water_cleaning", "deep_cleaning",
+                         "drying", "fast_drying"]:
             return "cleaning"
-        elif status_code == 2:
+        elif h20_status in ["offline", "standby", "charging", "charged",
+                           "sleeping", "updating"]:
             return "docked"
-        elif status_code == 3:
+        elif h20_status == "paused":
             return "paused"
-        elif status_code == 4:
+        elif h20_status == "error":
             return "error"
-        elif status_code == 5:
-            return "returning"
-        elif status_code in [6, 13]:
-            return "docked"
         else:
             # Default to docked for unknown states
             return "docked"
