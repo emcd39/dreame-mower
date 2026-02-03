@@ -68,10 +68,6 @@ from .const import (
     ACTION_STOP,
     ACTION_DOCK,
     DEVICE_CODE_PROPERTY,
-    # Hold device imports
-    HOLD_MODELS,
-    HOLD_STATUS_MAPPING,
-    HOLD_STATUS_CODE_PROPERTY,
     # Hold device actions
     HOLD_ACTION_START,
     HOLD_ACTION_STOP,
@@ -81,7 +77,12 @@ from .const import (
     HOLD_ACTION_START_DEEP_CLEAN,
     HOLD_ACTION_START_DRYING,
     HOLD_ACTION_STOP_DRYING,
+    HOLD_STATUS_MAPPING,
+    HOLD_STATUS_CODE_PROPERTY,
 )
+
+# Import HOLD_MODELS from parent const (integration level)
+from ..const import HOLD_MODELS
 
 _LOGGER = logging.getLogger(__name__)
 
