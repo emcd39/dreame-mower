@@ -209,28 +209,47 @@ HOLD_ACTION_STOP_DRYING = ActionIdentifier(siid=7, aiid=2, name="stop_drying")
 # HOLD_ACTION_TEST_4_4 = ActionIdentifier(siid=4, aiid=4, name="test_4_4")
 
 # Hold device status mappings
-# From dreame.hold.w2422 iotKeyValue JSON
+# From dreame.hold.w2422 iotKeyValue JSON (official Xiaomi spec)
+# https://cnbj2.fds.api.xiaomi.com/000000-public/file/c9d38fbfb7e45c79cfe7830e0b8ab40099759e7d_dreame.hold.w2422_iotKeyValue_translate_20.json
 HOLD_STATUS_MAPPING = {
-    1: "mopping",           # 正在洗地
-    2: "offline",           # 离线
-    3: "standby",           # 待机中
-    4: "charging",          # 正在充电
-    5: "self_cleaning",     # 正在自清洁 ⭐
-    6: "drying",            # 正在烘干 ⭐
-    7: "sleeping",          # 休眠中
-    8: "vacuuming",         # 正在吸尘
-    9: "adding_water",      # 正在加注清水
-    10: "paused",           # 洗地暂停中
-    11: "paused",           # 自清洁暂停中
-    12: "paused",           # 烘干暂停中
-    13: "updating",         # OTA升级中
-    14: "updating",         # 语音包升级中
-    15: "charged",          # 充电完成
-    26: "hot_water_cleaning",  # 正在热水自清洁 ⭐
-    27: "deep_cleaning",    # 正在深度热水自清洁 ⭐
-    28: "self_cleaning",     # 正在自清洁
-    32: "fast_drying",      # 正在快速烘干 ⭐
-    33: "fast_drying",      # 正在快速烘干
+    # Basic states
+    1: "mopping",           # 正在洗地 / Mop in progress
+    2: "offline",           # 离线 / Offline
+    3: "standby",           # 待机中 / Standby
+    4: "charging",          # 正在充电 / Charging
+    5: "self_cleaning",     # 正在自清洁 / Self-Cleaning
+    6: "drying",            # 正在烘干 / Drying
+    7: "sleeping",          # 休眠中 / Sleeping Mode
+    8: "vacuuming",         # 正在吸尘 / Vacuum cleaning in progress
+    9: "adding_water",      # 正在加注清水 / Adding water
+    10: "paused",           # 洗地暂停中 / Washing floor paused
+    11: "paused",           # 自清洁暂停中 / Self-Cleaning Paused
+    12: "paused",           # 烘干暂停中 / Drying paused
+    13: "updating",         # OTA升级中 / OTA upgrade in progress
+    14: "updating",         # 语音包升级中 / Voice package upgrade in progress
+    15: "charged",          # 充电完成 / Charging Completed
+
+    # Additional mopping states (16-25, 30-33)
+    16: "mopping",          # 正在洗地
+    17: "mopping",          # 正在洗地
+    18: "mopping",          # 正在洗地
+    19: "mopping",          # 正在洗地
+    20: "mopping",          # 正在洗地
+    21: "mopping",          # 正在洗地
+    22: "mopping",          # 正在洗地
+    23: "drying",           # 正在烘干
+    24: "drying",           # 正在烘干
+    25: "drying",           # 正在烘干
+
+    # Advanced cleaning states
+    26: "hot_water_cleaning",  # 正在热水自清洁 / Hot water self-cleaning in progress
+    27: "deep_cleaning",       # 正在深度热水自清洁 / Deep hot water self-cleaning in progress
+    28: "self_cleaning",       # 正在自清洁 / Self-Cleaning
+    29: "paused",              # 吸尘暂停中 / Vacuum cleaning paused
+    30: "paused",              # 热水自清洁暂停中 / Hot water self-cleaning paused
+    31: "paused",              # 深度热水自清洁暂停中 / Deep hot water self-cleaning paused
+    32: "fast_drying",         # 正在快速烘干 / Fast drying in progress
+    33: "fast_drying",         # 正在快速烘干 / Fast drying in progress
 }
 
 # Hold device cleaning modes
